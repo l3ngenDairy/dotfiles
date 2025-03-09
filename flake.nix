@@ -52,7 +52,7 @@
       };
       
       # Define username
-      username = "david"; # hardcoded for now, you can make this more dynamic later
+                        # username = "david"; # hardcoded for now, you can make this more dynamic later
       
       # Function to create a NixOS system configuration
       mkSystem = hostname: lib.nixosSystem {

@@ -22,6 +22,6 @@ cd "${HOME}/dotfiles"
 
 # Rebuild system
 echo "==> Rebuilding system..."
-sudo nixos-rebuild switch --flake ~/dotfiles/.
+sudo nixos-rebuild switch --flake ~/dotfiles/. --impure
 
 echo "==> Update complete!"

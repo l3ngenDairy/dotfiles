@@ -25,9 +25,8 @@ if [[ ! -d "${HOME}/dotfiles" ]]; then
 else
   cd "${HOME}/dotfiles"
 fi
+echo '==> Adding hardware-configuration'
 sudo nixos-generate-config --root /
-cp /etc/nixos/hardware-configuration.nix ~/dotfiles/nixos/hardware
-
 # Detect hostname for configuration
 HOST=$(hostname)
 echo "==> Detected hostname: ${HOST}"
