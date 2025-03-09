@@ -61,8 +61,51 @@
           # Pass user.nix as a module, not importing it
           ./user.nix
           ./nixos/configuration.nix
-          home-manager.nixosModules.home-manager
-          {
+
+({ pkgs, lib, ... }: {
+  # Don't redefine the option here, it's already in gpu.nix
+
+  # Just set the value using system.activationScripts
+  config = {
+    # This script will run during system activation (after build)
+    system.activationScripts.detectGpu = lib.stringAfter [ "users" ] ''
+      if ${pkgs.pciutils}/bin/lspci | grep -qi "nvidia"; then
+        echo "Detected NVIDIA GPU"
+      elif ${pkgs.pciutils}/bin/lspci | grep -qi "amd"; then
+        echo "Detected AMD GPU"
+      else
+        echo "No specific GPU detected"
+      fi
+    '';
+
+    # Set the vendor based on build-time detection
+    hardware.gpu.vendor = let
+      # Try to detect using a derivation that runs at build time, not eval time
+      detect = pkgs.runCommand "detect-gpu" {} ''
+        if [ -e /sys/class/drm ] && ls -la /sys/class/drm/ | grep -q "nvidia"; then
+          echo "nvidia" > $out
+        elif [ -e /sys/class/drm ] && (ls -la /sys/class/drm/ | grep -q "amdgpu" || ls -la /sys/class/drm/ | grep -q "radeon"); then
+          echo "amd" > $out
+        else
+          echo "unknown" > $out
+        fi
+      '';
+    in
+      # Safely try to read the file, with a fallback if it fails
+      lib.findFirst (x: x != null) "unknown" [
+        (lib.findFirst (x: x != null) null [
+          (if builtins.pathExists detect then lib.removeSuffix "\n" (builtins.readFile detect) else null)
+        ])
+      ];
+  };
+})
+
+          # Now your GPU module can safely use the hardware.gpu.vendor option
+          ./nixos/modules/gpu.nix
+
+
+        home-manager.nixosModules.home-manager
+        {
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;

@@ -1,34 +1,27 @@
-# gpu.nix
-{ config, pkgs, lib, ... }:
+{ config, lib, pkgs, ... }:
+
 let
-  # Detect GPU vendor using lspci
-  detectGpuVendor = pkgs.runCommand "detect-gpu-vendor" { buildInputs = [ pkgs.pciutils ]; } ''
-    if lspci | grep -qi "nvidia"; then
+  detectGpu = pkgs.runCommand "detect-gpu" {} ''
+    if ${pkgs.pciutils}/bin/lspci | grep -qi "nvidia"; then
       echo "nvidia" > $out
-    elif lspci | grep -qi "amd"; then
+    elif ${pkgs.pciutils}/bin/lspci | grep -qi "amd"; then
       echo "amd" > $out
     else
       echo "unknown" > $out
     fi
   '';
+in {
+  options.hardware.gpu.vendor = lib.mkOption {
+    type = lib.types.str;
+    default = "unknown";
+    description = "Detected GPU vendor (nvidia, amd, or unknown)";
+  };
 
-  gpuVendor = lib.removeSuffix "\n" (builtins.readFile detectGpuVendor);
+  config = {
+    hardware.gpu.vendor = lib.mkDefault (builtins.readFile detectGpu);
 
-  # Import the appropriate GPU configuration based on detection
-  gpuConfig =
-    if gpuVendor == "nvidia" then
-      import ./nvidia.nix
-    else if gpuVendor == "amd" then
-      import ./amd.nix
-    else
-      { };
-in
-{
-  imports = [
-    gpuConfig
-  ];
-
-  # Fallback or default configuration
-  services.xserver.enable = true;
-  hardware.opengl.enable = true;
+    # Basic GPU settings
+    services.xserver.enable = true;
+    hardware.opengl.enable = true;
+  };
 }
