@@ -9,7 +9,7 @@
     ./virtmanager.nix
     ./ollama.nix
     ./kdeplasma.nix            
-    ./nvidia.nix
+                #    ./nvidia.nix
     ./boot.nix
     ./networking.nix
     ./time-locale.nix
@@ -26,6 +26,7 @@
                 # ./xdg-portal.nix
     ./microcode.nix
     ./transmission.nix
+    ./gpu.nix            
 
   ];
 }
