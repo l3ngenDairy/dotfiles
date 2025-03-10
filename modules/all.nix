@@ -7,7 +7,7 @@
     ./bluetooth.nix
     ./sound.nix
     ./virtmanager.nix
-    ./ollama-cuda.nix
+    ./ollama.nix
     ./kdeplasma.nix            
     ./nvidia.nix
     ./boot.nix
@@ -16,12 +16,17 @@
     ./nix-settings.nix
     ./documentation.nix
     ./bash.nix
-    ./printing.nix
+ #   ./printing.nix
+ #   ./flatpak.nix
+                #./environment.nix  
+                #    ./hyprland.nix
+                #    ./gnome.nix
+ #   ./cinnamon.nix
     ./system76-scheduler.nix
                 # ./xdg-portal.nix
     ./microcode.nix
     ./transmission.nix
-
+    #./gpu.nix
 
   ];
 }
