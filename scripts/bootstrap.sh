@@ -28,12 +28,8 @@ fi
 echo '==> Adding hardware-configuration'
 sudo nixos-generate-config --root /
 
-# Detect hostname for configuration
-HOST=$(hostname)
-echo "==> Detected hostname: ${HOST}"
-
-# Install the configuration
+# Install default configuration
 echo "==> Installing system configuration..."
-sudo nixos-rebuild switch --flake ".#${HOST}" --impure
+sudo nixos-rebuild switch --flake ".#default" --impure
 
 echo "==> Dotfiles setup complete!"
