@@ -83,18 +83,12 @@
     ];
   };
 
-  # Laptop configuration
-  da-laptop = nixpkgs.lib.nixosSystem {
+  # default configuration
+  default = nixpkgs.lib.nixosSystem {
     inherit system specialArgs;
     modules = [
-      # Your laptop configuration modules
-      nvf.nixosModules.default
-      ({ config, pkgs, ... }: {
-        environment.systemPackages = with pkgs; [
-          vim
-          git
-        ];
-      })
+      ./default/configuration.nix
+
     ];
   };
 };
