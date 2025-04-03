@@ -3,7 +3,7 @@
     ./packages.nix
     ./steam.nix
     ./drives.nix
-    ./nvf.nix
+#    ./nvf.nix
     ./bluetooth.nix
     ./sound.nix
     ./virtmanager.nix
