@@ -78,16 +78,16 @@
   da-desktop = nixpkgs.lib.nixosSystem {
     inherit system specialArgs;
     modules = [
-      ./nixos/configuration.nix
+      ./da-desktop/configuration.nix
       nvf.nixosModules.default
     ];
   };
 
-  # default configuration
-  default = nixpkgs.lib.nixosSystem {
+  # laptop configuration
+  da-laptop = nixpkgs.lib.nixosSystem {
     inherit system specialArgs;
     modules = [
-      ./default/configuration.nix
+      ./da-laptop/configuration.nix
 
     ];
   };
