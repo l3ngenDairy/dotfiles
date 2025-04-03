@@ -26,7 +26,7 @@ else
   cd "${HOME}/dotfiles"
 fi
 echo '==> Adding hardware-configuration'
-sudo nixos-generate-config --root /
+sudo nixos-generate-config
 
 
 # Detect hostname for configuration
