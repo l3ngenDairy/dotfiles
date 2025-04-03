@@ -7,9 +7,9 @@
     ./bluetooth.nix
     ./sound.nix
     ./virtmanager.nix
-    ./ollama-cuda.nix
+    ./ollama.nix
     ./kdeplasma.nix            
-    ./nvidia.nix
+#    ./nvidia.nix
     ./boot.nix
     ./networking.nix
     ./time-locale.nix
