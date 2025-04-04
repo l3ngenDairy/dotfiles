@@ -11,7 +11,16 @@
       "default-address-pools" = [
         { "base" = "172.27.0.0/16"; "size" = 24; }
       ];
-      # Remove the entire runtimes section
+      # Remove the entire runtimes section 
+
+"runtimes" = {
+    "nvidia" = {
+      "path" = "${pkgs.nvidia-container-runtime}/bin/nvidia-container-runtime";
+      "runtimeArgs" = [];
+    };
+  };
+
+
     };
   };
   
