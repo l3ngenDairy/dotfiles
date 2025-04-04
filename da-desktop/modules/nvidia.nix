@@ -14,10 +14,7 @@
 
   hardware.nvidia-container-toolkit.enable = true;
 
-  environment.systemPackages = with pkgs; [
-    nvidia-container-toolkit
-  ];
-}
+ }
 
 
 
