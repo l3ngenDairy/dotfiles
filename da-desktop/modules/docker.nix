@@ -15,7 +15,7 @@ virtualisation.docker = {
     modesetting.enable = true;
     open = false;
     nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.production;
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
 
 hardware.nvidia-container-toolkit.enable = true;       
