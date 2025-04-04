@@ -1,29 +1,21 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
-  virtualisation.docker = {
+ 
+virtualisation.docker = {
     enable = true;
-    rootless = {
-      enable = false;
-      setSocketVariable = true;
-    };
-    daemon.settings = {
-      "default-runtime" = "nvidia";
-      "runtimes" = {
-        "nvidia" = {
-          "path" = "nvidia-container-runtime";
-          "runtimeArgs" = [];
-        };
-      };
-      "default-address-pools" = [
-        { "base" = "172.27.0.0/16"; "size" = 24; }
-      ];
-    };
+    enableNvidia = true;
   };
 
-  users.users.david.extraGroups = [ "docker" ];
+  users.users.david = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" "docker" ];
+  };
 
-  environment.systemPackages = with pkgs; [
-    docker-compose
-  ];
+  hardware.nvidia = {
+    modesetting.enable = true;
+    open = false;
+    nvidiaSettings = true;
+    package = config.boot.kernelPackages.nvidiaPackages.production;
+  };
 }
 
