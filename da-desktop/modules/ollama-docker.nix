@@ -4,9 +4,6 @@
   virtualisation.docker.rootless = {
     enable = true;
     setSocketVariable = true;
-    package = pkgs.docker-rootless-extras.override {
-      inherit (config.hardware.nvidia) package;
-    };
   };
 
   # Ollama container definition
