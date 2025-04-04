@@ -10,6 +10,15 @@
       "default-address-pools" = [
         { "base" = "172.27.0.0/16"; "size" = 24; }
       ];
+"runtimes" = {
+        "nvidia" = {
+          "path" = "/run/current-system/sw/bin/nvidia-container-runtime";
+          "runtimeArgs" = [];
+        };
+      };
+    
+
+
     };
   };
   
