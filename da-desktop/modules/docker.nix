@@ -2,6 +2,7 @@
 {
   virtualisation.docker = {
     enable = true;
+    enableNvidia = true;  # This is crucial
     rootless = {
       enable = true;
       setSocketVariable = true;
@@ -10,15 +11,12 @@
       "default-address-pools" = [
         { "base" = "172.27.0.0/16"; "size" = 24; }
       ];
-"runtimes" = {
+      "runtimes" = {
         "nvidia" = {
-          "path" = "/run/current-system/sw/bin/nvidia-container-runtime";
+          "path" = "${pkgs.nvidia-container-toolkit}/bin/nvidia-container-runtime";
           "runtimeArgs" = [];
         };
       };
-    
-
-
     };
   };
   
