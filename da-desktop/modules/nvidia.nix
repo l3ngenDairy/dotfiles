@@ -1,6 +1,11 @@
 { config, pkgs, lib, ... }:
 
 {
+
+  environment.systemPackages = with pkgs; [
+    nvidia-docker
+    nvidia-container-toolkit
+  ];
   # Enable NVIDIA graphics drivers
   hardware.graphics.enable = true;
 
