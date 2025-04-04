@@ -32,7 +32,7 @@
   };
   
   # Add users to the docker group (replace username with your actual username)
-  users.users.username.extraGroups = [ "docker" ];
+  users.users.david.extraGroups = [ "docker" ];
   
   # Optional: Install docker-compose
   environment.systemPackages = with pkgs; [
