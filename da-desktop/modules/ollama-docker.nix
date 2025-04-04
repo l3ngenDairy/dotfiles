@@ -12,7 +12,6 @@
       ExecStart = ''
         ${pkgs.docker}/bin/docker run --rm \
           --gpus all \
-          --runtime=nvidia \
           --name ollama \
           -v ollama:/root/.ollama \
           -p 11434:11434 \

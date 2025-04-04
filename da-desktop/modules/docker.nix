@@ -4,7 +4,7 @@
     enable = true;
     # Remove enableNvidia since it's deprecated
     rootless = {
-      enable = true;
+      enable = false;
       setSocketVariable = true;
     };
     daemon.settings = {
