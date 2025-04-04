@@ -3,7 +3,7 @@
  
 virtualisation.docker = {
     enable = true;
-    enableNvidia = true;
+                # enableNvidia = true;
   };
 
   users.users.david = {
@@ -17,5 +17,7 @@ virtualisation.docker = {
     nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.production;
   };
+
+hardware.nvidia-container-toolkit.enable;       
 }
 
