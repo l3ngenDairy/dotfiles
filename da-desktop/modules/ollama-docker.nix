@@ -21,10 +21,10 @@ in
         '';
         ExecStop = "docker stop ${containerName}";
         ExecStopPost = "docker rm ${containerName}";
-      };
 
-      # Define the restart policy for the systemd service
-      restartPolicy = "always";  # Correct restart policy for systemd
+        # Correct restart option for systemd
+        Restart = "always";  # Ensure the service restarts if it stops
+      };
 
     };
   };
