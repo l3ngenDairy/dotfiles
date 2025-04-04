@@ -1,31 +1,38 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
+let
+  dockerImage = "ollama/ollama";
+  containerName = "ollama";
+  volumePath = "$HOME/ollama-data";  # Customize if you have a different path
+  port = 11434;
+in
 {
-  systemd.services.ollama-docker = {
-    description = "Ollama container using Docker";
-    after = [ "docker.service" "network-online.target" ];
-    wants = [ "network-online.target" ];
-    wantedBy = [ "multi-user.target" ];
-
-    serviceConfig = {
-      ExecStartPre = "${pkgs.docker}/bin/docker pull ollama/ollama";
-      ExecStart = ''
-        ${pkgs.docker}/bin/docker run --rm \
-          --gpus all \
-          --name ollama \
-          -v ollama:/root/.ollama \
-          -p 11434:11434 \
-          ollama/ollama
-      '';
-      ExecStopPost = "${pkgs.docker}/bin/docker rm -f ollama || true";
-      Restart = "always";
-      RestartSec = 10;
+  options = {
+    # Optional configuration parameters
+    config.ollama.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable the Ollama Docker container.";
     };
   };
 
-  # Ensure Docker volume exists
-  systemd.tmpfiles.rules = [
-    "v /var/lib/docker/volumes/ollama 0755 david docker -"
-  ];
+  config = lib.mkIf config.ollama.enable {
+    systemd.services.docker-ollama = {
+      description = "Ollama Docker Container";
+      after = [ "docker.service" ];
+      wantedBy = [ "multi-user.target" ];
+
+      serviceConfig = {
+        ExecStart = ''
+          docker run -d --gpus=all -v ${volumePath}:/root/.ollama -p ${port}:${port} --name ${containerName} ${dockerImage}
+        '';
+        ExecStop = "docker stop ${containerName}";
+        ExecStopPost = "docker rm ${containerName}";
+      };
+
+      # Ensure the service is started on boot
+      restart = "always";
+    };
+  };
 }
 
