@@ -3,8 +3,8 @@
 let
   dockerImage = "ollama/ollama";
   containerName = "ollama";
-  volumePath = "$HOME/ollama-data";  # Customize if you have a different path
-  port = "11434";
+  volumePath = "/home/david/ollama-data";  # Replace with the correct absolute path to your data
+  port = "11434";  # Ensure the port is treated as a string
 in
 {
   # The module automatically enables itself, no need for external `ollama.enable` in `configuration.nix`
