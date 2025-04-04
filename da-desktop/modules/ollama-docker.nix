@@ -1,28 +1,32 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
+
 {
-  # Configure rootless Docker with NVIDIA support
-  virtualisation.docker.rootless = {
-    enable = true;
-    setSocketVariable = true;
-  };
+  systemd.services.ollama-docker = {
+    description = "Ollama container using Docker";
+    after = [ "docker.service" "network-online.target" ];
+    wants = [ "network-online.target" ];
+    wantedBy = [ "multi-user.target" ];
 
-  # Ollama container definition
-  virtualisation.oci-containers.containers.ollama = {
-    image = "ollama/ollama";
-    autoStart = true;
-    volumes = [ "ollama:/root/.ollama" ];
-    ports = [ "11434:11434" ];
-    environment = {
-      NVIDIA_VISIBLE_DEVICES = "all";
+    serviceConfig = {
+      ExecStartPre = "${pkgs.docker}/bin/docker pull ollama/ollama";
+      ExecStart = ''
+        ${pkgs.docker}/bin/docker run --rm \
+          --gpus all \
+          --runtime=nvidia \
+          --name ollama \
+          -v ollama:/root/.ollama \
+          -p 11434:11434 \
+          ollama/ollama
+      '';
+      ExecStopPost = "${pkgs.docker}/bin/docker rm -f ollama || true";
+      Restart = "always";
+      RestartSec = 10;
     };
-    extraOptions = [
-      "--gpus=all"
-      "--runtime=nvidia"
-    ];
   };
 
-  # Ensure the ollama volume is created
+  # Ensure Docker volume exists
   systemd.tmpfiles.rules = [
     "v /var/lib/docker/volumes/ollama 0755 david docker -"
   ];
 }
+
