@@ -14,6 +14,12 @@
 
   hardware.nvidia-container-toolkit.enable = true;
 
+environment.systemPackages = with pkgs; [
+    nvidia-docker
+    nvidia-container-toolkit
+  ];
+        
+
  }
 
 
