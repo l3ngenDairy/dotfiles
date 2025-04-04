@@ -7,16 +7,9 @@ let
   port = 11434;
 in
 {
-  options = {
-    # Optional configuration parameters
-    config.ollama.enable = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Enable the Ollama Docker container.";
-    };
-  };
+  # The module automatically enables itself, no need for external `ollama.enable` in `configuration.nix`
+  config = lib.mkIf true {  # Always enable the service
 
-  config = lib.mkIf config.ollama.enable {
     systemd.services.docker-ollama = {
       description = "Ollama Docker Container";
       after = [ "docker.service" ];
