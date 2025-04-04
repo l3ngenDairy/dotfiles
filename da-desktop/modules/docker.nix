@@ -15,8 +15,8 @@
 
 "runtimes" = {
     "nvidia" = {
-      "path" = "${pkgs.nvidia-container-runtime}/bin/nvidia-container-runtime";
-      "runtimeArgs" = [];
+    "path" = "${pkgs.dockerTools.nvidia-container-runtime}/bin/nvidia-container-runtime";
+    "runtimeArgs" = [];
     };
   };
 
