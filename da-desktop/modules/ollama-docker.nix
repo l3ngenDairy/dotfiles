@@ -23,8 +23,9 @@ in
         ExecStopPost = "docker rm ${containerName}";
       };
 
-      # Ensure the service is started on boot
-      restart = "always";
+      # Define the restart policy for the systemd service
+      restartPolicy = "always";  # Correct restart policy for systemd
+
     };
   };
 }
