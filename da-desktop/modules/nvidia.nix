@@ -1,8 +1,5 @@
 { config, pkgs, lib, ... }:
 {
-  hardware.graphics.enable = true;
-  services.xserver.videoDrivers = [ "nvidia" ];
-
   hardware.nvidia = {
     modesetting.enable = true;
     open = false;
@@ -12,16 +9,12 @@
     package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
 
-  # Enable NVIDIA container toolkit
   hardware.nvidia-container-toolkit.enable = true;
 
-  # Required packages for NVIDIA container support
   environment.systemPackages = with pkgs; [
-    nvidia-docker
     nvidia-container-toolkit
   ];
 }
-
 
 
 

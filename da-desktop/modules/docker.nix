@@ -2,7 +2,7 @@
 {
   virtualisation.docker = {
     enable = true;
-    enableNvidia = true;  # This is crucial
+    # Remove enableNvidia since it's deprecated
     rootless = {
       enable = true;
       setSocketVariable = true;
@@ -11,12 +11,7 @@
       "default-address-pools" = [
         { "base" = "172.27.0.0/16"; "size" = 24; }
       ];
-      "runtimes" = {
-        "nvidia" = {
-          "path" = "${pkgs.nvidia-container-toolkit}/bin/nvidia-container-runtime";
-          "runtimeArgs" = [];
-        };
-      };
+      # Remove the entire runtimes section
     };
   };
   
