@@ -2,21 +2,22 @@
 {
  
 virtualisation.docker = {
-    enable = true;
-                # enableNvidia = true;
-  };
+		enable = true;
+		enableOnBoot = false;
+		enableNvidia = true;
 
-  users.users.david = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "docker" ];
-  };
-
-  hardware.nvidia = {
-    modesetting.enable = true;
-    open = false;
-    nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
-  };
+		rootless = {
+			enable = true;
+			setSocketVariable = true;
+            daemon.settings = {
+				runtimes = {
+					nvidia = {
+            			path = "${pkgs.nvidia-docker}/bin/nvidia-container-runtime";
+          			};
+				};
+            };
+		};
+	};
 
 hardware.nvidia-container-toolkit.enable = true;       
 }
