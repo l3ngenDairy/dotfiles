@@ -1,19 +1,13 @@
 { config, pkgs, lib, ... }:
-
 {
-  # Merge with your existing Docker configuration
-  virtualisation.docker = {
-    enableNvidia = true;  # Enable NVIDIA container support
-    daemon.settings = {
-      "runtimes" = {
-        "nvidia" = {
-          "path" = "${pkgs.nvidia-docker}/bin/nvidia-container-runtime";
-          "runtimeArgs" = [];
-        };
-      };
+  # Configure rootless Docker with NVIDIA support
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+    package = pkgs.docker-rootless-extras.override {
+      inherit (config.hardware.nvidia) package;
     };
   };
-
 
   # Ollama container definition
   virtualisation.oci-containers.containers.ollama = {
@@ -29,4 +23,9 @@
       "--runtime=nvidia"
     ];
   };
+
+  # Ensure the ollama volume is created
+  systemd.tmpfiles.rules = [
+    "v /var/lib/docker/volumes/ollama 0755 david docker -"
+  ];
 }
