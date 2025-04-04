@@ -18,6 +18,6 @@ virtualisation.docker = {
     package = config.boot.kernelPackages.nvidiaPackages.production;
   };
 
-hardware.nvidia-container-toolkit.enable;       
+hardware.nvidia-container-toolkit.enable = true;       
 }
 
