@@ -2,38 +2,37 @@
 
 let
   ollamaDataDir = "/home/david/ollama-data";
+  uid = toString config.users.users.david.uid;
 in {
-  # Add ollama to system packages
   environment.systemPackages = with pkgs; [
     ollama
-    podman  # Ensure podman is available
+    podman
   ];
-        
-  # Enable GPU support for rootless containers
-  hardware.nvidia-container-toolkit.enable = true;
-  virtualisation.podman.enableNvidia = true;
 
-  # Podman configuration for rootless containers
+  hardware.nvidia-container-toolkit.enable = true;
   virtualisation.podman = {
     enable = true;
-    dockerCompat = true;  # Create 'docker' alias for podman
+    enableNvidia = true;
+    dockerCompat = true;
   };
 
-  # Ensure ollama data directory exists
   systemd.tmpfiles.rules = [
     "d ${ollamaDataDir} 0755 david users - -"
   ];
 
-  # Create a user service for the Ollama container
+  users.users.david.linger = true;
+
   systemd.user.services.ollama = {
     description = "Ollama Container Service";
     wantedBy = [ "default.target" ];
-    after = [ "network.target" "podman.socket" ];
+    after = [ "network-online.target" "podman.socket" ];
     requires = [ "podman.socket" ];
 
     serviceConfig = {
+      Type = "notify";
       ExecStart = "${pkgs.podman}/bin/podman run \
         --name ollama \
+        --sdnotify=conmon \
         -p 11434:11434 \
         -v ${ollamaDataDir}:/root/.ollama:Z \
         --security-opt=label=disable \
@@ -41,16 +40,24 @@ in {
         ollama/ollama:latest";
       ExecStop = "${pkgs.podman}/bin/podman stop ollama";
       ExecStopPost = "${pkgs.podman}/bin/podman rm ollama";
-      Restart = "on-failure";
-      TimeoutStartSec = "infinity";                 
+      Restart = "always";
+      RestartSec = "30s";
+      TimeoutStartSec = "0";
+      TimeoutStopSec = "120";
+      WatchdogSec = "0";
     };
 
     environment = {
-      XDG_RUNTIME_DIR = "/run/user/${toString config.users.users.david.uid}";
-      DOCKER_HOST = "unix:///run/user/${toString config.users.users.david.uid}/podman/podman.sock";
+      XDG_RUNTIME_DIR = "/run/user/${uid}";
+      DOCKER_HOST = "unix:///run/user/${uid}/podman/podman.sock";
     };
   };
 
-  # Enable lingering so the service starts at boot
-  users.users.david.linger = true;
+  # Explicit socket creation
+  systemd.user.sockets.podman = {
+    Unit.Description = "Podman API Socket";
+    Socket.ListenStream = "%t/podman/podman.sock";
+    Socket.SocketMode = "0660";
+    Install.WantedBy = [ "sockets.target" ];
+  };
 }
