@@ -18,9 +18,6 @@ in {
     "user.max_user_namespaces" = 28633;
   };
 
-  # Configure cgroups v2 for rootless containers
-  systemd.enableUnifiedCgroupHierarchy = true;
-
   # Ensure ollama data directory exists with correct permissions
   systemd.tmpfiles.rules = [
     "d ${ollamaDataDir} 0755 david users - -"
@@ -54,9 +51,9 @@ in {
     };
   };
 
-  # Alternative linger setup for older NixOS versions
-  systemd.services."user@".serviceConfig = lib.mkIf (lib.versionOlder config.system.stateVersion "22.05") {
-    RuntimeDirectory = "user/%U";
-    RuntimeDirectoryMode = "0755";
-  };
+  # Enable lingering for the user (alternative method)
+  services.logind.extraConfig = ''
+    RuntimeDirectorySize=8G
+    RemoveIPC=no
+  '';
 }
