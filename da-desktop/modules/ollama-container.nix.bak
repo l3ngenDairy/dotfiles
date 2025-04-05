@@ -15,23 +15,12 @@ in {
     "d ${ollamaDataDir} 0755 david users - -"
   ];
 
-  # Define the Ollama container with GPU support for rootless containers
+  # Define the Ollama container with GPU support
   virtualisation.oci-containers.containers.ollama = {
     image = "ollama/ollama:latest";
     ports = [ "11434:11434" ];
     volumes = [ "${ollamaDataDir}:/root/.ollama:Z" ]; # Use :Z for SELinux compatibility
-
-    # Podman extra options (rootless container options)
-    extraOptions = [
-      "--userns=keep-id"  # Keep the user ID in the container the same as on the host (important for rootless)
-      "--gpus=all"        # Enable GPU access
-    ];
+    extraOptions = [ "--gpus=all" ];
   };
-  
-  # Enable rootless Podman (default in NixOS)
-  virtualisation.podman.enable = true;
-
-  # Ensure user has access to Podman without root privileges
-  users.users.david.extraGroups = [ "podman" ];
 }
 
