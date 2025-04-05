@@ -80,6 +80,14 @@
     modules = [
       ./da-desktop/configuration.nix
       nvf.nixosModules.default
+      home-manager.nixosModules.home-manager
+      {
+        home-manager.useGlobalPkgs = true;
+        home-manager.useUserPackages = true;
+
+        home-manager.users.david = import ./da-desktop/home.nix;
+      }
+                                                
     ];
   };
 
