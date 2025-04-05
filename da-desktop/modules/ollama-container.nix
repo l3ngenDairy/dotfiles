@@ -54,7 +54,9 @@ in {
     };
   };
 
-  # Allow user services to persist after logout
-  systemd.linger.enable = true;
-  users.users.david.linger = true;
+  # Alternative linger setup for older NixOS versions
+  systemd.services."user@".serviceConfig = lib.mkIf (lib.versionOlder config.system.stateVersion "22.05") {
+    RuntimeDirectory = "user/%U";
+    RuntimeDirectoryMode = "0755";
+  };
 }
