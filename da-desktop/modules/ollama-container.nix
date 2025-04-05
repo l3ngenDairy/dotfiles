@@ -82,7 +82,6 @@ in {
   };
   
   # Enable cgroups v2 (recommended for rootless containers)
-  systemd.enableUnifiedCgroupHierarchy = lib.mkDefault true;
   
   # Remove the system oci-containers definition since we're using a user service
   # virtualisation.oci-containers.containers.ollama = {...};
