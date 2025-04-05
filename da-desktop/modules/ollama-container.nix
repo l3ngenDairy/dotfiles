@@ -2,6 +2,7 @@
 
 let
   ollamaDataDir = "/home/david/ollama-data";
+  userUid = config.users.users.david?.uid or throw "User 'david' UID not found";
 in {
   environment.systemPackages = with pkgs; [
     ollama
@@ -27,7 +28,7 @@ in {
 
     # Ensure DOCKER_HOST is correctly set for rootless Docker
     environment.variables = {
-      DOCKER_HOST = "unix:///run/user/${config.users.users.david.uid}/docker.sock";
+      DOCKER_HOST = "unix:///run/user/${userUid}/docker.sock";
     };
   };
 }
