@@ -2,38 +2,44 @@
 
 let
   ollamaDataDir = "/home/david/ollama-data";
-  # Check if the 'david' user exists and fetch the UID
-  userUid = if config.users.users.david != null && config.users.users.david.uid != null then
-    config.users.users.david.uid
-  else
-    throw "User 'david' UID not found";
+  user = "david";
+  group = "users";
 in {
   environment.systemPackages = with pkgs; [
     ollama
   ];
-
-  # Enable GPU container support (required for nvidia-smi to work inside)
+        
+  # Enable GPU container support
   hardware.nvidia-container-toolkit.enable = true;
 
-  # Ensure ollama data directory exists on boot
+  # Ensure ollama data directory exists on boot with correct permissions
   systemd.tmpfiles.rules = [
-    "d ${ollamaDataDir} 0755 david users - -"
+    "d ${ollamaDataDir} 0755 ${user} ${group} - -"
   ];
 
-  # Define the Ollama container with GPU support in a rootless manner
+  # Optional: If you want to automatically pull the image on first run
+  virtualisation.oci-containers.backend = "podman"; # or "docker" if you prefer
+
+  # Define the Ollama container with GPU support
   virtualisation.oci-containers.containers.ollama = {
     image = "ollama/ollama:latest";
+    imageFile = null; # Ensure it pulls from the registry
     ports = [ "11434:11434" ];
-    volumes = [ "${ollamaDataDir}:/root/.ollama:Z" ]; # Use :Z for SELinux compatibility
-    extraOptions = [ "--gpus=all" ];
-
-    # Rootless Docker configuration
-    user = "david"; # Set the user for the container
-
-    # Ensure DOCKER_HOST is correctly set for rootless Docker
-    environment.variables = {
-      DOCKER_HOST = "unix:///run/user/${userUid}/docker.sock";
-    };
+    volumes = [ 
+      "${ollamaDataDir}:/root/.ollama" 
+      # Optional: Add additional volumes if needed
+    ];
+    extraOptions = [
+      "--gpus=all"
+      # Security improvements:
+      "--security-opt=no-new-privileges"
+      "--userns=keep-id"
+    ];
+    user = "1000:1000"; # Run as your user if needed
+    autoStart = true;
   };
-}
 
+  # Optional: If you want NVIDIA drivers properly set up
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.opengl.enable = true;
+}
