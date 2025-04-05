@@ -2,7 +2,11 @@
 
 let
   ollamaDataDir = "/home/david/ollama-data";
-  userUid = config.users.users.david?.uid or throw "User 'david' UID not found";
+  # Check if the 'david' user exists and fetch the UID
+  userUid = if config.users.users.david != null && config.users.users.david.uid != null then
+    config.users.users.david.uid
+  else
+    throw "User 'david' UID not found";
 in {
   environment.systemPackages = with pkgs; [
     ollama
