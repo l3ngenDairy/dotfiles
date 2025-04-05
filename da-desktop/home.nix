@@ -1,4 +1,10 @@
 { config, pkgs, ... }: {
+  imports = [
+    ./home-modules/ollama-container.nix
+  ];
+
+  services.ollama-container.enable = true;
+
   home.username = "david";
   home.homeDirectory = "/home/david";
 
