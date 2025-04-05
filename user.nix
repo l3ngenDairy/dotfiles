@@ -7,7 +7,7 @@
     users.david = {
       isNormalUser = true;
       description = "david";
-      extraGroups = [ "networkmanager" "wheel" "input" "libvirtd" "docker" "video" ];
+      extraGroups = [ "networkmanager" "wheel" "input" "libvirtd" "docker" "podman" ];
       packages = with pkgs; [];
     };
   };
