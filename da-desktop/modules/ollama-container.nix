@@ -25,8 +25,8 @@ in {
     # Rootless Docker configuration
     user = "david"; # Set the user for the container
 
-    # Set Docker socket for rootless mode (assumes rootless Docker is set up)
-    environment = {
+    # Ensure the environment variable is properly set for rootless Docker
+    environment = lib.mkForce {
       DOCKER_HOST = "unix:///run/user/${config.users.users.david.uid}/docker.sock";
     };
   };
