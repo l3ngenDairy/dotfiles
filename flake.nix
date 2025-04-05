@@ -42,6 +42,8 @@
   }: let
     # Define system architecture (default to x86_64-linux)
     system = "x86_64-linux";
+    
+
 
     # Helper function to generate a package set with overlays
     pkgsFor = system: import nixpkgs {
@@ -100,6 +102,9 @@
     ];
   };
 };
+    # Add Home Manager as an app
+    apps.x86_64-linux.home-manager = home-manager.homeManager;
+                        
 
     # Define Neovim package
     packages.${system}.neovim =
