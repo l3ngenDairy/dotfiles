@@ -42,6 +42,7 @@ in {
       ExecStop = "${pkgs.podman}/bin/podman stop ollama";
       ExecStopPost = "${pkgs.podman}/bin/podman rm ollama";
       Restart = "on-failure";
+      TimeoutStartSec = "infinity";                 
     };
 
     environment = {
