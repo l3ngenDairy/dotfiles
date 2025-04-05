@@ -1,32 +1,22 @@
-{ config, lib, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
-  dockerImage = "ollama/ollama";
-  containerName = "ollama";
-  volumePath = "/home/david/ollama-data";  # Replace with the correct absolute path to your data
-  port = "11434";  # Ensure the port is treated as a string
-in
-{
-  # The module automatically enables itself, no need for external `ollama.enable` in `configuration.nix`
-  config = lib.mkIf true {  # Always enable the service
+  ollamaDataDir = "/home/david/ollama-data";
+in {
+  # Ensure the directory exists
+  systemd.tmpfiles.rules = [
+    "d ${ollamaDataDir} 0755 david users - -"
+  ];
 
-    systemd.services.docker-ollama = {
-      description = "Ollama Docker Container";
-      after = [ "docker.service" ];
-      wantedBy = [ "multi-user.target" ];
-
-      serviceConfig = {
-        ExecStart = ''
-          docker run -d --gpus=all -v ${volumePath}:/root/.ollama -p ${port}:${port} --name ${containerName} ${dockerImage}
-        '';
-        ExecStop = "docker stop ${containerName}";
-        ExecStopPost = "docker rm ${containerName}";
-
-        # Correct restart option for systemd
-        Restart = "always";  # Ensure the service restarts if it stops
-      };
-
-    };
+  virtualisation.oci-containers.containers.ollama = {
+    image = "ollama/ollama:latest";
+    ports = [ "11434:11434" ];
+    volumes = [ "${ollamaDataDir}:/root/.ollama" ];
+    extraOptions = [ "--gpus=all" ];
   };
+
+  # Optional: Ensure Docker is enabled
+  virtualisation.docker.enable = true;
+  users.users.david.extraGroups = [ "docker" ];
 }
 
