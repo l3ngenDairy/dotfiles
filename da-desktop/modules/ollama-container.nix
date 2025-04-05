@@ -2,44 +2,55 @@
 
 let
   ollamaDataDir = "/home/david/ollama-data";
-  user = "david";
-  group = "users";
 in {
   environment.systemPackages = with pkgs; [
     ollama
-  ];
-        
-  # Enable GPU container support
-  hardware.nvidia-container-toolkit.enable = true;
-
-  # Ensure ollama data directory exists on boot with correct permissions
-  systemd.tmpfiles.rules = [
-    "d ${ollamaDataDir} 0755 ${user} ${group} - -"
+    docker-compose
   ];
 
-  # Optional: If you want to automatically pull the image on first run
-  virtualisation.oci-containers.backend = "podman"; # or "docker" if you prefer
+  # Enable rootless Podman containers
+  virtualisation = {
+    containers.enable = true;
+    containers.storage.settings = {
+      storage = {
+        driver = "overlay";
+        runroot = "/run/containers/storage";
+        graphroot = "/var/lib/containers/storage";
+        rootless_storage_path = "/tmp/containers-$USER";
+        options.overlay.mountopt = "nodev,metacopy=on";
+      };
+    };
 
-  # Define the Ollama container with GPU support
-  virtualisation.oci-containers.containers.ollama = {
-    image = "ollama/ollama:latest";
-    imageFile = null; # Ensure it pulls from the registry
-    ports = [ "11434:11434" ];
-    volumes = [ 
-      "${ollamaDataDir}:/root/.ollama" 
-      # Optional: Add additional volumes if needed
-    ];
-    extraOptions = [
-      "--gpus=all"
-      # Security improvements:
-      "--security-opt=no-new-privileges"
-      "--userns=keep-id"
-    ];
-    user = "1000:1000"; # Run as your user if needed
-    autoStart = true;
+    oci-containers.backend = "podman";
+    podman = {
+      enable = true;
+      enableNvidia = true;  # Enable Nvidia support for Podman
+      dockerCompat = true;  # Enable Docker compatibility
+    };
   };
 
-  # Optional: If you want NVIDIA drivers properly set up
-  services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.opengl.enable = true;
+  # Enable GPU container support (required for nvidia-smi to work inside)
+  hardware.nvidia-container-toolkit.enable = true;
+
+  # Ensure ollama data directory exists on boot
+  systemd.tmpfiles.rules = [
+    "d ${ollamaDataDir} 0755 david users - -"
+  ];
+
+  # Define the Ollama container with GPU support (rootless with Podman)
+  virtualisation.oci-containers.containers.ollama = {
+    image = "ollama/ollama:latest";
+    ports = [ "11434:11434" ];
+    volumes = [ "${ollamaDataDir}:/root/.ollama:Z" ];  # Use :Z for SELinux compatibility
+    extraOptions = [ "--gpus=all" ];  # GPU support for rootless
+    runAsUser = lib.mkForce true;  # Ensure the container runs as the current user
+  };
+
+  # Initialize Docker host for Podman if not already set
+  environment.extraInit = ''
+    if [ -z "$DOCKER_HOST" -a -n "$XDG_RUNTIME_DIR" ]; then
+      export DOCKER_HOST="unix://$XDG_RUNTIME_DIR/podman/podman.sock"
+    fi
+  '';
 }
+
