@@ -30,28 +30,29 @@ in {
   };
   
   # Create a systemd user service for Ollama instead of using system oci-containers
-  systemd.user.services.ollama-container = {
-    description = "Rootless Ollama Container";
-    wantedBy = [ "default.target" ];
-    after = [ "network-online.target" ];
-    requires = [ "network-online.target" ];
-    
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = 
-        "${pkgs.podman}/bin/podman run --rm --name ollama " +
-        "-p 11434:11434 " +
-        "-v ${ollamaDataDir}:/root/.ollama:Z " +
-        "--security-opt label=disable " +
-        "--userns=keep-id " +
-        "--gpus=all " +
-        "ollama/ollama:latest";
-      
-      ExecStop = "${pkgs.podman}/bin/podman stop ollama";
-      Restart = "on-failure";
-      RestartSec = "10";
-    };
+systemd.user.services.ollama-container = {
+  description = "Rootless Ollama Container";
+  wantedBy = [ "default.target" ];
+  # Remove these two lines:
+  # after = [ "network-online.target" ];
+  # requires = [ "network-online.target" ];
+  
+  serviceConfig = {
+    Type = "simple";
+    ExecStartPre = "-${pkgs.podman}/bin/podman rm -f ollama";
+    ExecStart =
+      "${pkgs.podman}/bin/podman run --rm --name ollama " +
+      "-p 11434:11434 " +
+      "-v ${ollamaDataDir}:/root/.ollama:Z " +
+      "--security-opt label=disable " +
+      "--userns=keep-id " +
+      "--gpus=all " +
+      "ollama/ollama:latest";
+    ExecStop = "${pkgs.podman}/bin/podman stop ollama";
+    Restart = "on-failure";
+    RestartSec = "10";
   };
+};
   
   # Optional: Create a systemd user timer for periodic tasks (like model management or updates)
   systemd.user.timers.ollama-maintenance = {
@@ -75,15 +76,7 @@ in {
     };
   };
   
-  # Optional: Add convenient shell aliases
-  environment.shellAliases = {
-    ollama-list = "podman exec ollama ollama list";
-    ollama-pull = "podman exec ollama ollama pull";
-    ollama-run = "podman exec ollama ollama run";
-  };
-  
-  # Enable cgroups v2 (recommended for rootless containers)
-  
+
   # Remove the system oci-containers definition since we're using a user service
   # virtualisation.oci-containers.containers.ollama = {...};
 }
