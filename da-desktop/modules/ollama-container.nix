@@ -43,7 +43,6 @@ in {
     ports = [ "11434:11434" ];
     volumes = [ "${ollamaDataDir}:/root/.ollama:Z" ];  # Use :Z for SELinux compatibility
     extraOptions = [ "--gpus=all" ];  # GPU support for rootless
-    runAsUser = lib.mkForce true;  # Ensure the container runs as the current user
   };
 
   # Initialize Docker host for Podman if not already set
