@@ -3,6 +3,10 @@
 let
   ollamaDataDir = "/home/david/ollama-data";
 in {
+  environment.systemPackages = with pkgs; [
+    ollama
+  ];
+        
   # Enable GPU container support (required for nvidia-smi to work inside)
   hardware.nvidia-container-toolkit.enable = true;
 
