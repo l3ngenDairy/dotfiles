@@ -24,7 +24,7 @@
     ./transmission.nix
     ./webcam.nix
     ./minecraft.nix            
-    ./docker.nix
+                #  ./docker.nix
 
   ];
 }

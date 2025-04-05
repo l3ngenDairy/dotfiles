@@ -3,20 +3,20 @@
 let
   ollamaDataDir = "/home/david/ollama-data";
 in {
-  # Ensure the directory exists
+  # Enable GPU container support (required for nvidia-smi to work inside)
+  hardware.nvidia-container-toolkit.enable = true;
+
+  # Ensure ollama data directory exists on boot
   systemd.tmpfiles.rules = [
     "d ${ollamaDataDir} 0755 david users - -"
   ];
 
+  # Define the Ollama container with GPU support
   virtualisation.oci-containers.containers.ollama = {
     image = "ollama/ollama:latest";
     ports = [ "11434:11434" ];
-    volumes = [ "${ollamaDataDir}:/root/.ollama" ];
+    volumes = [ "${ollamaDataDir}:/root/.ollama:Z" ]; # Use :Z for SELinux compatibility
     extraOptions = [ "--gpus=all" ];
   };
-
-  # Optional: Ensure Docker is enabled
-  virtualisation.docker.enable = true;
-  users.users.david.extraGroups = [ "docker" ];
 }
 
