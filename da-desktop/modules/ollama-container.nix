@@ -24,7 +24,6 @@ in {
 
     # Rootless Docker configuration
     user = "david"; # Set the user for the container
-    security.opt = "no-new-privileges"; # Optional: security setting to avoid privilege escalation
 
     # Set Docker socket for rootless mode (assumes rootless Docker is set up)
     environment = {
