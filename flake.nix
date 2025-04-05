@@ -103,8 +103,10 @@
   };
 };
     # Add Home Manager as an app
-    apps.x86_64-linux.home-manager = home-manager.packages.${system}.default;                    
-
+apps.x86_64-linux.home-manager = {
+  type = "app";
+  program = "${home-manager.packages.${system}.default}/bin/home-manager";
+};
     # Define Neovim package
     packages.${system}.neovim =
       (nvf.lib.neovimConfiguration {
