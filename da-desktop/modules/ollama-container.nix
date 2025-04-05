@@ -38,14 +38,15 @@ in {
     
     serviceConfig = {
       Type = "simple";
-      ExecStartPre = "-${pkgs.podman}/bin/podman rm -f ollama";
-      ExecStart = "${pkgs.podman}/bin/podman run --rm --name ollama \
-        -p 11434:11434 \
-        -v ${ollamaDataDir}:/root/.ollama:Z \
-        --security-opt label=disable \
-        --userns=keep-id \
-        --gpus=all \
-        ollama/ollama:latest";
+      ExecStart = 
+        "${pkgs.podman}/bin/podman run --rm --name ollama " +
+        "-p 11434:11434 " +
+        "-v ${ollamaDataDir}:/root/.ollama:Z " +
+        "--security-opt label=disable " +
+        "--userns=keep-id " +
+        "--gpus=all " +
+        "ollama/ollama:latest";
+      
       ExecStop = "${pkgs.podman}/bin/podman stop ollama";
       Restart = "on-failure";
       RestartSec = "10";
