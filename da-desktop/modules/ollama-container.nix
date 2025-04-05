@@ -2,64 +2,33 @@
 
 let
   ollamaDataDir = "/home/david/ollama-data";
-  uid = toString config.users.users.david.uid;
 in {
   environment.systemPackages = with pkgs; [
     ollama
-    podman
   ];
 
+  # Enable GPU container support (required for nvidia-smi to work inside)
   hardware.nvidia-container-toolkit.enable = true;
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-  };
 
+  # Ensure ollama data directory exists on boot
   systemd.tmpfiles.rules = [
     "d ${ollamaDataDir} 0755 david users - -"
   ];
 
-  users.users.david.linger = true;
+  # Define the Ollama container with GPU support in a rootless manner
+  virtualisation.oci-containers.containers.ollama = {
+    image = "ollama/ollama:latest";
+    ports = [ "11434:11434" ];
+    volumes = [ "${ollamaDataDir}:/root/.ollama:Z" ]; # Use :Z for SELinux compatibility
+    extraOptions = [ "--gpus=all" ];
 
-  # Correct systemd user service definition
-  systemd.user.services.ollama = {
-    Unit = {
-      Description = "Ollama Container Service";
-      After = [ "network-online.target" "podman.socket" ];
-      Requires = [ "podman.socket" ];
-      WantedBy = [ "default.target" ];  # Moved WantedBy here
-    };
-
-    Service = {
-      Type = "notify";
-      ExecStart = "${pkgs.podman}/bin/podman run \
-        --name ollama \
-        --sdnotify=conmon \
-        -p 11434:11434 \
-        -v ${ollamaDataDir}:/root/.ollama:Z \
-        --security-opt=label=disable \
-        --gpus=all \
-        ollama/ollama:latest";
-      ExecStop = "${pkgs.podman}/bin/podman stop ollama";
-      ExecStopPost = "${pkgs.podman}/bin/podman rm ollama";
-      Restart = "always";
-      RestartSec = "30s";
-      TimeoutStartSec = "0";
-      TimeoutStopSec = "120";
-    };
-  };
-
-  # Correct socket definition
-  systemd.user.sockets.podman = {
-    Unit = {
-      Description = "Podman API Socket";
-    };
-    Socket = {
-      ListenStream = "%t/podman/podman.sock";
-      SocketMode = "0660";
-    };
-    Install = {
-      WantedBy = [ "sockets.target" ];
+    # Rootless Docker configuration
+    user = "david";
+    group = "users";
+    security.opt = "no-new-privileges";
+    environment = {
+      DOCKER_HOST = "unix:///run/user/${config.users.users.david.uid}/docker.sock";
     };
   };
 }
+
