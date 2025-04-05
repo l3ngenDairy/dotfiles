@@ -10,10 +10,10 @@ in {
   config = lib.mkIf config.services.ollama-container.enable {
     home.packages = with pkgs; [ podman ];
 
-    home.file."ollama-data".directory = {
-      recursive = true;
-      target = ollamaDataDir;
-    };
+    home.activation.createOllamaDataDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      mkdir -p ${ollamaDataDir}
+      chown ${username}:${username} ${ollamaDataDir}
+    '';
 
     systemd.user.services.ollama = {
       Unit = {
