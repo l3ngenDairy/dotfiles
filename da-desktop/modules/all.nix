@@ -8,7 +8,8 @@
     ./sound.nix
     ./virtmanager.nix
                 # ./ollama-cuda.nix
-    ./ollama-container.nix            
+                # ./ollama-container.nix   
+    ./podman.nix            
     ./kdeplasma.nix            
     ./nvidia.nix
     ./boot.nix
