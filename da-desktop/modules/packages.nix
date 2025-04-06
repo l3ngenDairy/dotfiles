@@ -31,6 +31,8 @@
     # -- office --
     anki
     libreoffice-qt6-fresh
+    hunspell
+    hunspellDicts.en-au           
     obsidian
     # -- media --
     gimp
