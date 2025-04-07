@@ -1,7 +1,7 @@
 {
   imports = [
     ./packages.nix
-    ./steam.nix
+    ./gaming.nix
     ./drives.nix
     ./nvf.nix
     ./bluetooth.nix

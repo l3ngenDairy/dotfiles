@@ -23,7 +23,8 @@
     xclip
 
     # === APPS ===
-    # -- browsers --
+
+     # -- browsers --
     firefox
     tor-browser
     # -- fun --
