@@ -7,8 +7,6 @@
     ./bluetooth.nix
     ./sound.nix
     ./virtmanager.nix
-                # ./ollama-cuda.nix
-                # ./ollama-container.nix   
     ./podman.nix            
     ./kdeplasma.nix            
     ./nvidia.nix
@@ -25,7 +23,5 @@
     ./transmission.nix
     ./webcam.nix
     ./minecraft.nix            
-                #  ./docker.nix
-
   ];
 }
