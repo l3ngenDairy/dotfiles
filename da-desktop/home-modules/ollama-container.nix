@@ -39,7 +39,7 @@ in {
             --gpus all \
             -v ${ollamaDataDir}:/root/.ollama:Z \
             -p 11434:11434 \
-            ollama/ollama:0.1.28
+            ollama/ollama:0.6.4
         '';
         Restart = "always";
         RestartSec = 5;
