@@ -29,8 +29,11 @@ in {
       };
 
       Service = {
+        ExecStartPre = [
+          "${pkgs.podman}/bin/podman image exists ollama/ollama:0.1.28 || ${pkgs.podman}/bin/podman load < ${ollamaImage}"
+        ];  
+                                
         ExecStart = ''
-          ${pkgs.podman}/bin/podman load < ${ollamaImage}                              
           ${pkgs.podman}/bin/podman run --rm \
             --name ollama \
             --gpus all \
