@@ -4,6 +4,13 @@ let
   username = config.home.username;
   homeDir = config.home.homeDirectory;
   ollamaDataDir = "${homeDir}/ollama-data";
+
+  ollamaImage = pkgs.dockerTools.pullImage {
+    imageName = "ollama/ollama";
+    finalImageTag = "0.1.28";
+    imageDigest = "sha256:aefb5681bc87b8209f65f31e7042a2d5b159db8f6ac926665ca6964ae4519b9e";
+    sha256 = "07n3s3gwfw2lgiz27xir8768p1y53c292jzdqjqrnpach06c56iv";
+  };      
 in {
   options.services.ollama-container.enable = lib.mkEnableOption "Ollama container with GPU support";
 
@@ -23,12 +30,13 @@ in {
 
       Service = {
         ExecStart = ''
+          ${pkgs.podman}/bin/podman load < ${ollamaImage}                              
           ${pkgs.podman}/bin/podman run --rm \
             --name ollama \
             --gpus all \
             -v ${ollamaDataDir}:/root/.ollama:Z \
             -p 11434:11434 \
-            ollama/ollama:latest
+            ollama/ollama:0.1.28
         '';
         Restart = "always";
         RestartSec = 5;
