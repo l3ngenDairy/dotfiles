@@ -22,6 +22,5 @@
     ./microcode.nix
     ./transmission.nix
     ./webcam.nix
-    ./minecraft.nix            
   ];
 }
