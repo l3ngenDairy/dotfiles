@@ -98,6 +98,7 @@
     inherit system specialArgs;
     modules = [
       ./da-laptop/configuration.nix
+     nvf.nixosModules.default
 
     ];
   };
