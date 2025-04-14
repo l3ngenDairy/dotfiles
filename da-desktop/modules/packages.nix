@@ -15,6 +15,7 @@
     sniffnet
     protonvpn-gui             
     wineWowPackages.stable
+    winetricks            
     freecad 
     sqlite
     vulkan-tools
