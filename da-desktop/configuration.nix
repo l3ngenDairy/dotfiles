@@ -16,7 +16,11 @@
       size = 4096; # Size in MB (4GB)
     }
   ];
-        
+  boot.kernel.sysctl = {
+    "vm.overcommit_memory" = 1;
+    "vm.max_map_count" = 1048576;
+  };
+          
 
   hardware.enableAllFirmware = true;
   system.stateVersion = "24.11";
