@@ -31,7 +31,7 @@
   
 
         #single gpu passthrough attempt
-  services.single-gpu-passthrough.enable = true;
+        # services.single-gpu-passthrough.enable = true;
         #  boot.kernelParams = [ 
         #    "amd_iommu=on"
         #   "iommu=pt" 
