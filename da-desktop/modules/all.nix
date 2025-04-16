@@ -22,5 +22,6 @@
     ./microcode.nix
     ./transmission.nix
     ./webcam.nix
+    ./gpupass.nix            
   ];
 }
