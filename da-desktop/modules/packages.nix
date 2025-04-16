@@ -8,6 +8,7 @@
     };
     
     environment.systemPackages = with pkgs; [
+    looking-glass-client            
     usbutils
     pciutils            
     ladybird            
