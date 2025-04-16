@@ -10,6 +10,9 @@
   # Install firefox.
   programs.firefox.enable = true;
   custom.webcam.enable = true; 
+
+
+        #added to get fitgirl to install not sure if needed      
   swapDevices = [
     {
       device = "/swapfile";
@@ -20,6 +23,10 @@
     "vm.overcommit_memory" = 1;
     "vm.max_map_count" = 1048576;
   };
+
+
+
+  services.fwupd.enable = true;
           
 
   hardware.enableAllFirmware = true;
