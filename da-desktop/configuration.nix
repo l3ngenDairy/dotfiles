@@ -17,6 +17,7 @@
     {
       device = "/swapfile";
       size = 4096; # Size in MB (4GB)
+      encrypted = true;                  
     }
   ];
   boot.kernel.sysctl = {
