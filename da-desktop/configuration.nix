@@ -27,6 +27,7 @@
 
 
   services.fwupd.enable = true;
+  boot.kernelParams = [ "amd_iommu=on" ];     
           
 
   hardware.enableAllFirmware = true;
