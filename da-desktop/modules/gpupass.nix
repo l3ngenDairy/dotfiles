@@ -1,57 +1,45 @@
 { config, lib, pkgs, ... }:
 
-with lib;
-
+let
+  gpuIDs = [
+    "10de:2482" # NVIDIA RTX 3070 Ti Graphics
+    "10de:228b" # NVIDIA HD Audio Controller
+  ];
+  # IOMMU Group 16 contains USB controllers
+  # Using AMD 500 Series Chipset USB 3.1 XHCI Controller
+  gpuUsbDriverId = "0000:02:00.0"; 
+in
 {
-  options.services.single-gpu-passthrough = {
-    enable = mkEnableOption "Single GPU passthrough VFIO setup";
-  };
+  options = { };
+  config = {
+    boot.kernelModules = [ "msr" "vfio-pci" "vfio_iommu_type1" "vfio" ];
 
-  config = mkIf config.services.single-gpu-passthrough.enable {
-    environment.etc = {
-      "libvirt/hooks/qemu" = {
-        text = ''
-          #!/usr/bin/env bash
-          VM_NAME="$1"
-          VM_ACTION="$2"
-          
-          if [ "$VM_NAME" = "gaming-vm" ]; then
-            if [ "$VM_ACTION" = "prepare" ]; then
-              # Stop display manager
-              systemctl stop display-manager
-              
-              # Unbind GPU from host
-              echo 0000:06:00.0 > /sys/bus/pci/devices/0000:06:00.0/driver/unbind
-              echo 0000:06:00.1 > /sys/bus/pci/devices/0000:06:00.1/driver/unbind
-              
-              # Bind to VFIO
-              echo 10de 2482 > /sys/bus/pci/drivers/vfio-pci/new_id
-              echo 10de 228b > /sys/bus/pci/drivers/vfio-pci/new_id
-            elif [ "$VM_ACTION" = "release" ]; then
-              # Unbind from VFIO
-              echo 0000:06:00.0 > /sys/bus/pci/drivers/vfio-pci/unbind
-              echo 0000:06:00.1 > /sys/bus/pci/drivers/vfio-pci/unbind
-              
-              # Rebind to NVIDIA driver
-              echo 10de 2482 > /sys/bus/pci/drivers/nvidia/new_id
-              echo 10de 228b > /sys/bus/pci/drivers/snd_hda_intel/new_id
-              
-              # Restart display manager
-              systemctl start display-manager
-            fi
-          fi
-        '';
-        mode = "0755";
+    boot.kernelParams = [
+      "nohibernate"
+      "init_on_alloc=0"
+      "amd_iommu=on" # Changed from intel_iommu as you have AMD CPU
+      "iommu=pt"
+      "console=tty1"
+      "vfio-pci.ids=${builtins.concatStringsSep "," gpuIDs}"
+    ];
+
+    services.udev.extraRules = ''
+      SUBSYSTEM=="vfio", OWNER="root", GROUP="kvm"
+    '';
+
+    # This service unbinds the USB controller from its current driver and binds it to vfio-pci
+    systemd.services.forceRebindUSB = {
+      enable = true;
+      description = "Force rebind USB controller to VFIO";
+      wantedBy = [ "multi-user.target" ];
+      script = ''
+        echo -n "${gpuUsbDriverId}" > /sys/bus/pci/drivers/xhci_hcd/unbind
+        echo -n "${gpuUsbDriverId}" > /sys/bus/pci/drivers/vfio-pci/bind
+      '';
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
       };
     };
-    
-    # Required kernel modules for VFIO
-    boot.kernelModules = [ "vfio_pci" "vfio" "vfio_iommu_type1" "vfio_virqfd" ];
-    
-    # Required kernel parameters for IOMMU
-    boot.kernelParams = [
-      "amd_iommu=on"
-      "iommu=pt"
-    ];
   };
 }
