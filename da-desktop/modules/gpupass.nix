@@ -29,7 +29,6 @@ in
 
     # This service unbinds the USB controller from its current driver and binds it to vfio-pci
     systemd.services.forceRebindUSB = {
-      enable = true;
       description = "Force rebind USB controller to VFIO";
       wantedBy = [ "multi-user.target" ];
       script = ''
