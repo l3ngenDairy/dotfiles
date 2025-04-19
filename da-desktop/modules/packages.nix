@@ -8,6 +8,7 @@
     };
     
     environment.systemPackages = with pkgs; [
+    kepubify            
     calibre           
     ciscoPacketTracer8            
     looking-glass-client            
