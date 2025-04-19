@@ -8,6 +8,7 @@
     };
     
     environment.systemPackages = with pkgs; [
+    calibre           
     ciscoPacketTracer8            
     looking-glass-client            
     usbutils
