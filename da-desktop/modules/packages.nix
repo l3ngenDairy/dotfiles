@@ -8,6 +8,7 @@
     };
     
     environment.systemPackages = with pkgs; [
+    ciscoPacketTracer8            
     looking-glass-client            
     usbutils
     pciutils            
