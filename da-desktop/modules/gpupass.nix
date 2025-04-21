@@ -1,14 +1,17 @@
 { config, lib, pkgs, ... }: 
 
 let
+  # Your NVIDIA RTX 3070 Ti and HD Audio Controller IDs
   gpuIDs = [
     "10de:2482" # NVIDIA RTX 3070 Ti Graphics
     "10de:228b" # NVIDIA HD Audio Controller
   ];
   
-  # IOMMU Group 16 contains USB controllers
+  # Your system has the GPU in IOMMU Group 17
+  # If you wanted to also pass through a USB controller, you could use one from
+  # IOMMU Group 16 (02:00.0) or 21 (08:00.3)
   # Using AMD 500 Series Chipset USB 3.1 XHCI Controller
-  gpuUsbDriverId = "0000:02:00.0";
+  gpuUsbDriverId = "0000:02:00.0"; # Comment this out if you don't want to pass USB
   
   # Create scripts to bind/unbind devices
   vfioBindScript = pkgs.writeShellScript "vfio-bind" ''
@@ -18,8 +21,8 @@ let
       device=$(echo $dev | cut -d ':' -f2)
       if [ -e /sys/bus/pci/devices/*:*:*.*/driver/unbind ]; then
         echo "Unbinding $vendor:$device from nvidia driver"
-        echo -n "*:*:*.0" > /sys/bus/pci/drivers/nvidia/unbind 2>/dev/null || true
-        echo -n "*:*:*.1" > /sys/bus/pci/drivers/snd_hda_intel/unbind 2>/dev/null || true
+        echo -n "0000:06:00.0" > /sys/bus/pci/drivers/nvidia/unbind 2>/dev/null || true
+        echo -n "0000:06:00.1" > /sys/bus/pci/drivers/snd_hda_intel/unbind 2>/dev/null || true
       fi
       echo "$vendor $device" > /sys/bus/pci/drivers/vfio-pci/new_id
     done
@@ -57,11 +60,11 @@ in {
     # Required kernel modules for VFIO
     boot.kernelModules = [ "msr" "vfio-pci" "vfio_iommu_type1" "vfio" ];
     
-    # Note: We're not adding the GPU IDs to vfio-pci.ids parameter anymore
+    # AMD CPU-specific parameters
     boot.kernelParams = [
       "nohibernate"
       "init_on_alloc=0"
-      "amd_iommu=on" # Changed from intel_iommu as you have AMD CPU
+      "amd_iommu=on"
       "iommu=pt"
       "console=tty1"
     ];
@@ -100,7 +103,7 @@ in {
           VM_ACTION="$2"
           
           # Add your VM name here - only bind for this specific VM
-          TARGET_VM="win10" # Change this to your VM name
+          TARGET_VM="win10" # Change this to your desired VM name
           
           if [ "$VM_NAME" = "$TARGET_VM" ]; then
             if [ "$VM_ACTION" = "prepare" ]; then
