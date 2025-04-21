@@ -20,6 +20,5 @@
     # Ensure proper group access for video devices
     users.groups.video = {};
   };
- custom.webcam.enable = true; 
-        
+         
 }

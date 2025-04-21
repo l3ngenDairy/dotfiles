@@ -8,7 +8,11 @@
       ../user.nix
     ];
   # Install firefox.
+        
   programs.firefox.enable = true;
+
+ custom.webcam.enable = true; 
+        
           #added to get fitgirl to install not sure if needed      
   swapDevices = [
     {
