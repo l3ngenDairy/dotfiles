@@ -9,10 +9,7 @@
     ];
   # Install firefox.
   programs.firefox.enable = true;
-  custom.webcam.enable = true; 
-
-
-        #added to get fitgirl to install not sure if needed      
+          #added to get fitgirl to install not sure if needed      
   swapDevices = [
     {
       device = "/swapfile";
@@ -23,21 +20,7 @@
     "vm.overcommit_memory" = 1;
     "vm.max_map_count" = 1048576;
   };
-
-  
-
   services.fwupd.enable = true;
-
-  
-
-        #single gpu passthrough attempt
-        # services.single-gpu-passthrough.enable = true;
-        #  boot.kernelParams = [ 
-        #    "amd_iommu=on"
-        #   "iommu=pt" 
-        #  ];     
-        #  boot.kernelModules = [ "vfio_pci" "vfio" "vfio_iommu_type1" "vfio_virqfd" ];      
-          
 
   hardware.enableAllFirmware = true;
   system.stateVersion = "24.11";

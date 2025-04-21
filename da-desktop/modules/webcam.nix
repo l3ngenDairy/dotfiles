@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
+        
   options.custom.webcam = {
     enable = lib.mkEnableOption "Enable webcam support";
   };
@@ -19,4 +20,6 @@
     # Ensure proper group access for video devices
     users.groups.video = {};
   };
+ custom.webcam.enable = true; 
+        
 }
