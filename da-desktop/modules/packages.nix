@@ -18,7 +18,7 @@
     ladybird            
     glances           
     sniffnet
-    protonvpn-gui             
+                #broken  protonvpn-gui             
     wineWowPackages.stable
     winetricks            
     freecad 
