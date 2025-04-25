@@ -8,6 +8,7 @@
     };
     
     environment.systemPackages = with pkgs; [
+    handbrake            
     kepubify            
     calibre           
     ciscoPacketTracer8            
