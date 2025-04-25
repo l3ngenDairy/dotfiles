@@ -3,7 +3,7 @@
 let
   username = config.home.username;
   homeDir = config.home.homeDirectory;
-  ollamaDataDir = "${homeDir}/ollama-data";
+  ollamaDataDir = "${homeDir}/Documents/ollama-data";
 in {
   options.services.ollama-container.enable = lib.mkEnableOption "Ollama container with GPU support";
 
