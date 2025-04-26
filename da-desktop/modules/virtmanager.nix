@@ -36,9 +36,11 @@
   };
   
         #looking glass shared memory  
+
 systemd.tmpfiles.rules = [
-  "d /dev/shm/looking-glass 0777 root root -"
+  "f /dev/shm/looking-glass 0666 - - - -"
 ];
+        
 
 
 
