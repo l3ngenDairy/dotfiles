@@ -43,21 +43,11 @@
 
   ### 🛠 Optimization tweaks start here:
 
-  services.journald.extraConfig = {
-    SystemMaxUse = "100M";
-    RuntimeMaxUse = "50M";
-  };
 
-  systemd.services."systemd-journal-flush" = {
-    enable = false;
-  };
 
   systemd.services."libvirt-guests" = {
     enable = false;
   };
 
-  systemd.extraConfig = ''
-    DefaultTimeoutStartSec=10s
-  '';
 }
 
