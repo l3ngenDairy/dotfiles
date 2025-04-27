@@ -1,17 +1,43 @@
+{ config, pkgs, ... }:
 {
+  # Enable the X server (needed for graphical desktop environments)
   services.xserver.enable = true;
 
-  # Enable SDDM for X11
+  # Enable the SDDM login manager (used to graphically log into KDE Plasma)
   services.displayManager.sddm.enable = true;
 
-  # Use KDE Plasma 5 (X11 version) instead of Plasma 6
-        #services.xserver.desktopManager.plasma5.enable = true;
+  # Enable KDE Plasma 6 desktop environment
+  services.desktopManager.plasma6.enable = true;
 
-  services.desktopManager.plasma6 = {
-    enable = true;
-    autoEnableServices = false;
-  };      
-  # Enable automatic login for the user
+  # Enable automatic login without needing to enter password
   services.displayManager.autoLogin.enable = true;
+  
+  # Set the user that will be automatically logged in
   services.displayManager.autoLogin.user = "david";
+
+  # --- Performance Tweaks ---
+
+  # Mount all disks with 'noatime' to reduce SSD writes (no update of access time on file reads)
+  fileSystems."/".options = [ "noatime" ];
+  
+  # Enable systemd timer to periodically TRIM the SSD
+  services.fstrim.enable = true;
+
+  # Disable Baloo file indexing (uses CPU/disk heavily, not needed for most users)
+  services.baloo.enable = false;
+
+  # Reduce journald disk writes (makes logs volatile, good for desktops)
+  services.journald = {
+    storage = "volatile";  # Keep logs in RAM, not written to disk
+    rateLimitInterval = "30s";  # Avoid flooding with too many logs
+    rateLimitBurst = 1000;
+  };
+
+  # Plasma 6 Specific: Exclude some heavy default packages if you want a lighter Plasma
+  environment.plasma6.excludePackages = with pkgs.kdePackages; [
+    konqueror     # Heavy old browser
+    khelpcenter   # Not needed usually
+    plasma-sdk    # Developer tools, not needed for normal users
+  ];
 }
+
