@@ -2,7 +2,6 @@
 
 { 
 
-  boot.blacklistedKernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
         
   environment.systemPackages = with pkgs; [
      nvidia-docker
