@@ -22,7 +22,7 @@
   
   # Enable systemd timer to periodically TRIM the SSD
   services.fstrim.enable = true;
-  services.xserver.displayManager.sessionRestore = false;
+services.desktopManager.plasma6.startWithEmptySession = true;
 
    # Plasma 6 Specific: Exclude some heavy default packages if you want a lighter Plasma
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
