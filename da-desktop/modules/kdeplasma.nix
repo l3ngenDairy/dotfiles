@@ -22,16 +22,9 @@
   
   # Enable systemd timer to periodically TRIM the SSD
   services.fstrim.enable = true;
+  services.xserver.displayManager.sessionRestore = false;
 
-
-  # Reduce journald disk writes (makes logs volatile, good for desktops)
-  services.journald = {
-    storage = "volatile";  # Keep logs in RAM, not written to disk
-    rateLimitInterval = "30s";  # Avoid flooding with too many logs
-    rateLimitBurst = 1000;
-  };
-
-  # Plasma 6 Specific: Exclude some heavy default packages if you want a lighter Plasma
+   # Plasma 6 Specific: Exclude some heavy default packages if you want a lighter Plasma
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
     konqueror     # Heavy old browser
     khelpcenter   # Not needed usually
