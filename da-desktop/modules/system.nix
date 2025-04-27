@@ -1,5 +1,5 @@
 { config, pkgs, ... }: {
-services.upower.enable = false;     
+  services.upower.enable = lib.mkForce false;
         
 }
 
