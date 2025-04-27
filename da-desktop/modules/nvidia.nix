@@ -19,10 +19,7 @@
     # Enable modesetting for better compatibility
      modesetting.enable = true;
      open = false;
-
-    # Disable power management features
-     powerManagement.enable = false;
-     powerManagement.finegrained = false;
+     powerManagement.enable = false;           
 
 
     # Enable the NVIDIA settings application
