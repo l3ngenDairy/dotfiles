@@ -16,14 +16,6 @@
   services.displayManager.autoLogin.user = "david";
 
   # --- Performance Tweaks ---
-
-  # Mount all disks with 'noatime' to reduce SSD writes (no update of access time on file reads)
-  fileSystems."/".options = [ "noatime" ];
-  
-  # Enable systemd timer to periodically TRIM the SSD
-  services.fstrim.enable = true;
-services.desktopManager.plasma6.startWithEmptySession = true;
-
    # Plasma 6 Specific: Exclude some heavy default packages if you want a lighter Plasma
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
     konqueror     # Heavy old browser
