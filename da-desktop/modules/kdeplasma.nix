@@ -6,8 +6,11 @@
 
   # Use KDE Plasma 5 (X11 version) instead of Plasma 6
         #services.xserver.desktopManager.plasma5.enable = true;
-  services.desktopManager.plasma6.enable = true;      
 
+  services.desktopManager.plasma6 = {
+    enable = true;
+    autoEnableServices = false;
+  };      
   # Enable automatic login for the user
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "david";
