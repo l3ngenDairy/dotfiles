@@ -25,7 +25,7 @@
      nvidiaSettings = true;
 
     # Use the stable version of the NVIDIA driver package
-     package = config.boot.kernelPackages.nvidiaPackages.latest;
+     package = config.boot.kernelPackages.nvidiaPackages.stable;
      };
   hardware.nvidia-container-toolkit.enable = true;    
 }
