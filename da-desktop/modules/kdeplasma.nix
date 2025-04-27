@@ -22,5 +22,7 @@
     khelpcenter   # Not needed usually
     plasma-sdk    # Developer tools, not needed for normal users
   ];
+services.xserver.desktopManager.plasma6.bluedevil.enable = false;  # Disable bluedevil (KDE Bluetooth manager)
+        
 }
 
