@@ -8,15 +8,12 @@
   
   virtualisation.libvirtd = {
     enable = true;
-    onBoot = "start";
-    onShutdown = "suspend";
     qemu = {
       ovmf.enable = true;
       runAsRoot = true;
     };
   };
   
-  # Network config through system service
   systemd.services.libvirtd-network-default = {
     enable = true;
     description = "Libvirt Default Network Auto-Start";
@@ -35,22 +32,32 @@
     '';
   };
   
-        #looking glass shared memory  
-
-systemd.tmpfiles.rules = [
-  "f /dev/shm/looking-glass 0666 - - - -"
-];
-        
-  services.libvirtd.guests = {
-    enable = true;
-    onBoot = "ignore";  # instead of start/resume
-    onShutdown = "shutdown";  # optional: handle shutdown cleanly
-  };
-
-
-
+  systemd.tmpfiles.rules = [
+    "f /dev/shm/looking-glass 0666 - - - -"
+  ];
+  
   programs.virt-manager = {
     enable = true;
     package = pkgs.virt-manager;
   };
+
+  ### 🛠 Optimization tweaks start here:
+
+  services.journald.extraConfig = {
+    SystemMaxUse = "100M";
+    RuntimeMaxUse = "50M";
+  };
+
+  systemd.services."systemd-journal-flush" = {
+    enable = false;
+  };
+
+  systemd.services."libvirt-guests" = {
+    enable = false;
+  };
+
+  systemd.extraConfig = ''
+    DefaultTimeoutStartSec=10s
+  '';
 }
+
