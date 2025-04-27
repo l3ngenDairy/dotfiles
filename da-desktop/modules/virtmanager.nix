@@ -41,6 +41,11 @@ systemd.tmpfiles.rules = [
   "f /dev/shm/looking-glass 0666 - - - -"
 ];
         
+  services.libvirtd.guests = {
+    enable = true;
+    onBoot = "ignore";  # instead of start/resume
+    onShutdown = "shutdown";  # optional: handle shutdown cleanly
+  };
 
 
 
