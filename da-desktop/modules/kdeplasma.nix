@@ -23,8 +23,6 @@
   # Enable systemd timer to periodically TRIM the SSD
   services.fstrim.enable = true;
 
-  # Disable Baloo file indexing (uses CPU/disk heavily, not needed for most users)
-  services.baloo.enable = false;
 
   # Reduce journald disk writes (makes logs volatile, good for desktops)
   services.journald = {
