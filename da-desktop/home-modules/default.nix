@@ -2,7 +2,7 @@
 
 {
   imports = [
-                #  ./ollama-container.nix                  
+    ./ollama-cuda.nix                  
  ];
 }
 
