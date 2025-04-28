@@ -3,7 +3,7 @@
     ./home-modules
   ];
 
-  services.ollama-container.enable = true;
+        # services.ollama-container.enable = true;
 
   home.username = "david";
   home.homeDirectory = "/home/david";
