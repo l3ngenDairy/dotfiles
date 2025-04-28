@@ -1,5 +1,9 @@
 { config, pkgs, ... }:
 
+let
+  username = "david";  # Replace with your username
+  ollamaDataDir = "/home/${username}/Documents/ollama-data";
+in
 {
   nixpkgs.overlays = [
     (self: super: {
@@ -11,16 +15,19 @@
     ollama
   ];
 
-  environment.variables = {
-    OLLAMA_DIR = "$HOME/Documents/ollama-data";
+  environment.sessionVariables = {
+    OLLAMA_MODELS = "${ollamaDataDir}/models";
   };
 
-  # Create the directory if it doesn't exist
-  system.activationScripts.ollamaDir = let
-    username = "david";  # Replace with your actual username
-    group = "users";     # Or your primary group if different
-  in ''
-    mkdir -p ${config.environment.variables.OLLAMA_DIR}
-    chown ${username}:${group} ${config.environment.variables.OLLAMA_DIR}
+  system.activationScripts.ollamaDir = ''
+    mkdir -p ${ollamaDataDir}/models
+    chown ${username}:users ${ollamaDataDir}
+    chmod 700 ${ollamaDataDir}
   '';
+
+  systemd.services.ollama = {
+    serviceConfig = {
+      Environment = "OLLAMA_MODELS=${ollamaDataDir}/models";
+    };
+  };
 }
