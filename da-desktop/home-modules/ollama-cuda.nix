@@ -2,11 +2,20 @@
 
 let
   ollamaDataDir = "${config.home.homeDirectory}/Documents/ollama-data";
-in
-{
-  # Add Ollama to your packages
+in {
+  # Use a home-manager specific overlay
+  nixpkgs.overlays = [
+    (self: super: {
+      ollama = super.ollama.override { 
+        acceleration = "cuda";
+      };
+    })
+  ];
+
+  # Add Ollama to your packages - no need for explicit override here since we use the overlay
   home.packages = with pkgs; [
-    (ollama.override { acceleration = "cuda"; })
+    ollama
+    ollama-cuda            
   ];
 
   # Set environment variables
@@ -20,10 +29,11 @@ in
     chmod 700 ${ollamaDataDir}
   '';
 
-  # Optional: Systemd user service
+  # Systemd user service
   systemd.user.services.ollama = {
     Unit.Description = "Ollama Service";
     Service = {
+      # Use the ollama from our overlay
       ExecStart = "${pkgs.ollama}/bin/ollama serve";
       Restart = "always";
       WorkingDirectory = ollamaDataDir;
