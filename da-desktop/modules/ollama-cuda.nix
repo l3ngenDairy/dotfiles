@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   username = "david";  # Replace with your username
@@ -25,9 +25,21 @@ in
     chmod 700 ${ollamaDataDir}
   '';
 
-  systemd.services.ollama = {
+  # Proper service configuration
+  services.ollama = {
+    enable = true;
+    environmentVariables = {
+      OLLAMA_MODELS = "${ollamaDataDir}/models";
+    };
+  };
+
+  # Only needed if you need to override the package
+  systemd.services.ollama = lib.mkIf config.services.ollama.enable {
     serviceConfig = {
       Environment = "OLLAMA_MODELS=${ollamaDataDir}/models";
+      # If you need to run as your user rather than root:
+      User = username;
+      Group = "users";
     };
   };
 }
