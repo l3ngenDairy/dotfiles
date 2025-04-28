@@ -22,6 +22,7 @@
     ./microcode.nix
     ./transmission.nix
     ./webcam.nix
-    ./system.nix            
+    ./system.nix
+    ./ollama-cuda.nix            
   ];
 }
