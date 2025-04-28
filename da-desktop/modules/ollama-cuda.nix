@@ -8,7 +8,7 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    ollama  # This will now be the CUDA version due to the overlay
+    ollama
   ];
 
   environment.variables = {
@@ -16,8 +16,11 @@
   };
 
   # Create the directory if it doesn't exist
-  system.activationScripts.ollamaDir = ''
+  system.activationScripts.ollamaDir = let
+    username = "david";  # Replace with your actual username
+    group = "users";     # Or your primary group if different
+  in ''
     mkdir -p ${config.environment.variables.OLLAMA_DIR}
-    chown ${config.users.users.${config.user}.name}:${config.users.groups.${config.user}.name} ${config.environment.variables.OLLAMA_DIR}
+    chown ${username}:${group} ${config.environment.variables.OLLAMA_DIR}
   '';
 }
