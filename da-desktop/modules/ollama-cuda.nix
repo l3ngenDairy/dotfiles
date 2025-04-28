@@ -14,7 +14,7 @@
 
   environment.variables = {
     # Set OLLAMA_DIR to use the user's Documents folder
-    OLLAMA_DIR = "${config.home.homeDirectory}/Documents/ollama-data";
+    OLLAMA_DIR = "$HOME/Documents/ollama-data";            
   };
 }
 
