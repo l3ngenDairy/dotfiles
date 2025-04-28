@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./ollama-cuda.nix                  
+                # ./ollama-cuda.nix                  
  ];
 }
 
