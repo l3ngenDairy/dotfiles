@@ -8,13 +8,16 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    ollama
-    ollama-cuda
+    ollama  # This will now be the CUDA version due to the overlay
   ];
 
   environment.variables = {
-    # Set OLLAMA_DIR to use the user's Documents folder
-    OLLAMA_DIR = "$HOME/Documents/ollama-data";            
+    OLLAMA_DIR = "$HOME/Documents/ollama-data";
   };
-}
 
+  # Create the directory if it doesn't exist
+  system.activationScripts.ollamaDir = ''
+    mkdir -p ${config.environment.variables.OLLAMA_DIR}
+    chown ${config.users.users.${config.user}.name}:${config.users.groups.${config.user}.name} ${config.environment.variables.OLLAMA_DIR}
+  '';
+}
