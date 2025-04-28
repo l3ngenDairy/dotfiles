@@ -15,7 +15,6 @@
     looking-glass-client            
     usbutils
     pciutils            
-    ladybird            
     glances           
     sniffnet
                 #broken  protonvpn-gui             
@@ -26,14 +25,11 @@
     vulkan-tools
     wl-clipboard
     cliphist
-    xclip
-
-    # === APPS ===
+       # === APPS ===
 
      # -- browsers --
     firefox
-    tor-browser
-    # -- fun --
+       # -- fun --
     discord
     # -- office --
     anki
@@ -42,11 +38,7 @@
     hunspellDicts.en-au           
     obsidian
     # -- media --
-    gimp
-    obs-studio
-    spotify
-    spotify-player
-    vlc
+       vlc
     # -- files --
     bat
     duplicati
@@ -65,15 +57,10 @@
     # -- system --
     fastfetch
     htop
-    kitty
-    tmux
-    xonsh
     # -- network --
     tcpdump            
     cups
     curl
-    openvpn
-    tor
     wget
     # === DEVELOPMENT ===
     # -- debugging --
@@ -82,7 +69,6 @@
     valgrind
     
     # -- libraries --
-    stripe-cli
     gobject-introspection
     # -- c --
     gcc
