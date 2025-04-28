@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   nixpkgs.overlays = [
@@ -10,14 +10,25 @@
   environment.systemPackages = with pkgs; [
     ollama
     ollama-cuda
-                
   ];
-  environment.variables = {
-    # Dynamically use user's home directory
-    OLLAMA_DIR = "$HOME/Documents/ollama-data";
+
+  systemd.user.services.ollama-wrapper = {
+    Unit = {
+      Description = "Ollama with custom data dir";
+      After = [ "network.target" ];
+    };
+
+    Service = {
+      ExecStart = ''
+        ${pkgs.ollama}/bin/ollama serve
+      '';
+      Environment = "OLLAMA_DIR=%h/Documents/ollama-data";
+      Restart = "on-failure";
+    };
+
+    Install = {
+      WantedBy = [ "default.target" ];
+    };
   };
-
-
-
-        
 }
+
