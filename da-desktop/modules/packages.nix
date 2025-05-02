@@ -32,40 +32,38 @@
        # -- fun --
     discord
     # -- office --
-    anki #flashcard app
-    libreoffice-qt6-fresh
-    hunspell #hunspell is libreoffice spellchecker
+    anki # flashcard app
+    libreoffice-qt6-fresh # office suite 
+    hunspell # hunspell is libreoffice spellchecker
     hunspellDicts.en-au           
     obsidian # notes program
     # -- media --
     vlc
     # -- files --
-    bat #cat with syntax highlighting
+    bat # cat with syntax highlighting
     file # usage file <target> this will output the file type
     p7zip # 7zip but better
     ripgrep # better grep usage rg 
     tree # shows files in a tree
     unzip # unzips 
     # -- image --
-    feh
-    ffmpeg
-    flameshot
+    ffmpeg # used for media manipulatin
+    flameshot # screen shots 
     # -- system --
-    fastfetch
-    htop
+    fastfetch  # display system info updated version of neofetch
+    htop # task managet
     # -- network --
-    tcpdump            
-    cups
-    curl
-    wget
+    tcpdump  #  Network sniffer      
+    cups # print service
+    curl # used for get and post requests
+    wget # used to get files from server
     # === DEVELOPMENT ===
     # -- debugging --
-    gdb
-    gef
-    valgrind
+    gdb # GNU Project debugger, allows you to see what is going on `inside’ another program while it executes 
+    gef # Modern experience for GDB with advanced debugging features for exploit developers & reverse engineers
+    valgrind # Debugging and profiling tool suite
     
     # -- libraries --
-    gobject-introspection
     # -- c --
     gcc
     clang
