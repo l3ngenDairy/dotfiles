@@ -32,24 +32,20 @@
        # -- fun --
     discord
     # -- office --
-    anki
+    anki #flashcard app
     libreoffice-qt6-fresh
-    hunspell
+    hunspell #hunspell is libreoffice spellchecker
     hunspellDicts.en-au           
-    obsidian
+    obsidian # notes program
     # -- media --
-       vlc
+    vlc
     # -- files --
-    bat
-    duplicati
-    eza
-    file
-    fzf
-    p7zip
-    ripgrep
-    tree
-    unzip
-    zoxide
+    bat #cat with syntax highlighting
+    file # usage file <target> this will output the file type
+    p7zip # 7zip but better
+    ripgrep # better grep usage rg 
+    tree # shows files in a tree
+    unzip # unzips 
     # -- image --
     feh
     ffmpeg
