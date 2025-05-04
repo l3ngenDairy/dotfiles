@@ -19,16 +19,16 @@
 
         DEVICE="singing-gundi"
 
-        # First reset to default
-        ${pkgs.libratbag}/bin/ratbagctl "$DEVICE" profile 0 reset
+        # Button remapping - correct syntax
+        # Buttons are numbered starting from 1 in the action command
+        ${pkgs.libratbag}/bin/ratbagctl "$DEVICE" profile 0 button 5 set button6
+        ${pkgs.libratbag}/bin/ratbagctl "$DEVICE" profile 0 button 6 set button7
+        ${pkgs.libratbag}/bin/ratbagctl "$DEVICE" profile 0 button 7 set button8
 
-        # Button remapping - using the correct syntax
-        ${pkgs.libratbag}/bin/ratbagctl "$DEVICE" profile 0 button 5 action set button button6
-        ${pkgs.libratbag}/bin/ratbagctl "$DEVICE" profile 0 button 6 action set button button7
-        ${pkgs.libratbag}/bin/ratbagctl "$DEVICE" profile 0 button 7 action set button button8
-
-        # Ensure profile 0 is active (your output shows profile 1 is active)
-        ${pkgs.libratbag}/bin/ratbagctl "$DEVICE" profile 0 set-active
+        # Alternative method if above doesn't work:
+        # ${pkgs.libratbag}/bin/ratbagctl "$DEVICE" profile 0 button 5 set key KEY_6
+        # ${pkgs.libratbag}/bin/ratbagctl "$DEVICE" profile 0 button 6 set key KEY_7
+        # ${pkgs.libratbag}/bin/ratbagctl "$DEVICE" profile 0 button 7 set key KEY_8
       '';
     };
   };
