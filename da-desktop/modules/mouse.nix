@@ -6,7 +6,11 @@
     enable = true;
     package = pkgs.libratbag;  # Explicitly specify the package
   };
-
+  environment.systemPackages = with pkgs; [
+    libratbag
+    piper            
+  ];
+  
   # Apply your custom configuration via a systemd service
   systemd.user.services.logitech-g502-config = {
     description = "Configure Logitech G502 HERO Mouse";
