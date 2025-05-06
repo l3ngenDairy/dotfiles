@@ -6,8 +6,11 @@
       allowUnfree = true;
       permittedInsecurePackaages = ["python-2.7.18.8" "electron-25.9.0" ]; 
     };
-    
+    programs.kdeconnect.enable = true; 
     environment.systemPackages = with pkgs; [
+      # === MOUSE ===
+    solaar            
+                
     handbrake            
     kepubify            
     calibre           

@@ -3,6 +3,7 @@
     libvirt
     qemu
     spice-vdagent
+    spice-gtk            
     virt-manager 
   ];
   
@@ -47,7 +48,9 @@
 
   systemd.services."libvirt-guests" = {
     enable = false;
+ 
   };
+virtualisation.spiceUSBRedirection.enable = true;
 
 }
 

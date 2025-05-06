@@ -24,6 +24,6 @@
     ./webcam.nix
     ./system.nix
                 #./ollama-cuda.nix
-    ./mouse.nix            
+                #./mouse.nix            
   ];
 }
