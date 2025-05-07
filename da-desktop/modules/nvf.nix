@@ -11,7 +11,7 @@
     GSETTINGS_BACKEND = "keyfile";
   };
         
-        
+  programs.vim.enable = true;      
   programs.nvf = { # enable nvf
     enable = true;
     settings = {
@@ -25,7 +25,6 @@
         telescope.enable = true;
         autocomplete.nvim-cmp.enable = true;
         languages = {
-          enableLSP = true;
           enableTreesitter = true;
           nix.enable = true;
           python.enable = true;
