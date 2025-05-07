@@ -25,6 +25,6 @@
     ./system.nix
                 #./ollama-cuda.nix
                 #./mouse.nix 
-    ./nvidia-open.nix            
+    ./nvidia-open.nix 
   ];
 }

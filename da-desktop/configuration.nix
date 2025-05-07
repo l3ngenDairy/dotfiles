@@ -25,7 +25,7 @@
     "vm.max_map_count" = 1048576;
   };
   services.fwupd.enable = true;
-
+  
   hardware.enableAllFirmware = true;
   system.stateVersion = "24.11";
   networking.hostName = "da-desktop";

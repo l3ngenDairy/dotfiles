@@ -9,8 +9,9 @@
     programs.kdeconnect.enable = true; 
     environment.systemPackages = with pkgs; [
       # === MOUSE ===
-    solaar            
-                
+    solaar
+
+
     handbrake            
     kepubify            
     calibre           
