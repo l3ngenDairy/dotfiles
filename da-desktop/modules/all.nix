@@ -9,7 +9,7 @@
     ./virtmanager.nix
                 #  ./podman.nix            
     ./kdeplasma.nix            
-    ./nvidia.nix
+                #./nvidia.nix
     ./boot.nix
     ./networking.nix
     ./time-locale.nix
@@ -24,6 +24,7 @@
     ./webcam.nix
     ./system.nix
                 #./ollama-cuda.nix
-                #./mouse.nix            
+                #./mouse.nix 
+    ./nvidia-open.nix            
   ];
 }
