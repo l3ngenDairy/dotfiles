@@ -10,7 +10,7 @@
     environment.systemPackages = with pkgs; [
       # === MOUSE ===
     solaar
-
+    neovim
 
     handbrake            
     kepubify            
