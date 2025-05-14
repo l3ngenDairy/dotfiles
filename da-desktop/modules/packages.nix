@@ -11,7 +11,7 @@
       # === MOUSE ===
     solaar
     neovim
-
+    vim
     handbrake            
     kepubify            
     calibre           
