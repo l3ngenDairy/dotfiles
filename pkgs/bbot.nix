@@ -1,38 +1,105 @@
 { pkgs ? import <nixpkgs> {} }:
 
 let
-  # Override tabulate globally for all Python packages
-  python = pkgs.python3.override {
-    packageOverrides = self: super: {
-      tabulate = super.tabulate.overridePythonAttrs (old: {
-        version = "0.8.10";
-        src = super.fetchPypi {
-          pname = "tabulate";
-          version = "0.8.10";
-          sha256 = "bFfz8916wngncBVfOtstsLGiaWN+QvJ1mZJeZLEU9Rk=";
-        };
-      });
-
-      # Add xmltojson package
-      xmltojson = super.buildPythonPackage rec {
-        pname = "xmltojson";
-        version = "2.0.2";
-        src = super.fetchPypi {
-          inherit pname version;
-          sha256 = "01al9xvy1isicvbbq4r614d5j44chjj2ykg00xaq5lcv81h9cw8h";
-        };
-        doCheck = false;
-      };
-    };
-  };
+  # Define Python and package aliases
+  python = pkgs.python3.withPackages (ps: with ps; [
+    pip
+    ansible-core
+    ansible-runner
+    beautifulsoup4
+    cachetools
+    deepdiff
+    dnspython
+    httpx
+    idna
+    lxml
+    mmh3
+    omegaconf
+    orjson
+    psutil
+    puremagic
+    pycryptodome
+    pydantic
+    pyjwt
+    pyopenssl
+    pyzmq
+    regex
+    setproctitle
+    socksio
+    tldextract
+    unidecode
+    websockets
+    wordninja
+    yara-python
+    asyncpg
+  ]);
 
   pythonPackages = python.pkgs;
 
-  # Add cloudcheck with fixed dependencies
+  # poetry-dynamic-versioning dependency
+  poetry-dynamic-versioning = pythonPackages.buildPythonPackage rec {
+    pname = "poetry-dynamic-versioning";
+    version = "1.8.2";
+
+    src = pythonPackages.fetchPypi {
+      pname = "poetry_dynamic_versioning";
+      inherit version;
+      sha256 = "0i2z0qrp0dwk4b3s9myrgawyfmx899zsr6jiyjc8xhka88yy2kfi";
+    };
+
+    format = "pyproject";
+    nativeBuildInputs = with pythonPackages; [ poetry-core ];
+    propagatedBuildInputs = with pythonPackages; [ dunamai jinja2 tomlkit packaging ];
+    doCheck = false;
+  };
+
+  # Additional dependencies
+  tabulate = pythonPackages.buildPythonPackage rec {
+    pname = "tabulate";
+    version = "0.8.10";
+    src = pythonPackages.fetchPypi {
+      inherit pname version;
+      sha256 = "sha256-bFfz8916wngncBVfOtstsLGiaWN+QvJ1mZJeZLEU9Rk=";
+    };
+    doCheck = false;
+  };
+
+  xmltojson = pythonPackages.buildPythonPackage rec {
+    pname = "xmltojson";
+    version = "2.0.2";
+    src = pythonPackages.fetchPypi {
+      inherit pname version;
+      sha256 = "01al9xvy1isicvbbq4r614d5j44chjj2ykg00xaq5lcv81h9cw8h";
+    };
+    doCheck = false;
+  };
+
+  # Fix: uses pythonPackages and adds Git for VCS detection
+  radixtarget = pythonPackages.buildPythonPackage rec {
+    pname = "radixtarget";
+    version = "3.0.13";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "blacklanternsecurity";
+      repo = "radixtarget";
+      rev = "d9a117cf67378354595ebd640ff675fd8e91fae6";
+      sha256 = "sha256-HgbCR9a99InnvddzZ+BBsczgVbcMJmbjozDfhwjLrkM=";
+    };
+
+    format = "pyproject";
+
+    nativeBuildInputs = with pythonPackages; [
+      poetry-core
+      poetry-dynamic-versioning
+    ] ++ [ pkgs.git ]; # <- ensures Git is available for dunamai
+
+    doCheck = false;
+  };
+
   cloudcheck = pythonPackages.buildPythonPackage rec {
     pname = "cloudcheck";
     version = "7.0.12";
-    
+
     src = pkgs.fetchFromGitHub {
       owner = "blacklanternsecurity";
       repo = "cloudcheck";
@@ -57,34 +124,33 @@ let
     doCheck = false;
   };
 
-  # Define radixtarget dependency
-  radixtarget = pythonPackages.buildPythonPackage rec {
-    pname = "radixtarget";
-    version = "3.0.13";
-
-    src = pkgs.fetchFromGitHub {
-      owner = "blacklanternsecurity";
-      repo = "radixtarget";
-      rev = "d9a117cf67378354595ebd640ff675fd8e91fae6";
-      sha256 = "sha256-HgbCR9a99InnvddzZ+BBsczgVbcMJmbjozDfhwjLrkM=";
+  baddns = pythonPackages.buildPythonPackage rec {
+    pname = "baddns";
+    version = "1.9.130";
+    src = pythonPackages.fetchPypi {
+      inherit pname version;
+      sha256 = "sha256-2YP8WdF7HFwCEFD0UkeWoMijrBOYstTqkYpxA/Xq9jY=";
     };
-
     format = "pyproject";
-
     nativeBuildInputs = with pythonPackages; [
       poetry-core
       poetry-dynamic-versioning
     ];
-
     doCheck = false;
   };
 
-in
+  # System-level dependencies
+  systemDeps = with pkgs; [
+    openssl
+    gnumake
+    nmap
+    ansible
+    jq
+  ];
 
-# Final package: bbot
-pythonPackages.buildPythonPackage rec {
+in pythonPackages.buildPythonPackage rec {
   pname = "bbot";
-  version = "0.1.0+gita09d9c3";
+  version = "1.0.5.2022";
 
   src = pkgs.fetchFromGitHub {
     owner = "blacklanternsecurity";
@@ -98,46 +164,30 @@ pythonPackages.buildPythonPackage rec {
   nativeBuildInputs = with pythonPackages; [
     poetry-core
     poetry-dynamic-versioning
-  ];
+  ] ++ systemDeps;
 
   propagatedBuildInputs = with pythonPackages; [
     xmltojson
     cloudcheck
     radixtarget
-    ansible-core
-    ansible-runner
-    beautifulsoup4
-    cachetools
-    deepdiff
-    dnspython
-    httpx
-    idna
-    lxml
-    mmh3
-    omegaconf
-    orjson
-    psutil
-    puremagic
-    pycryptodome
-    pydantic
-    pyjwt
-    pyzmq
-    regex
-    setproctitle
-    socksio
-    tldextract
-    unidecode
-    websockets
-    wordninja
-    yara-python
+    tabulate
+    baddns
   ];
 
-  # Disable runtime dependency check for xmltojson
+  preFixup = ''
+    export PATH="${pkgs.lib.makeBinPath systemDeps}:$PATH"
+    export PYTHONPATH="$PYTHONPATH:$out/${python.sitePackages}"
+  '';
+
+  doCheck = false;
+
   pythonRemoveDependencies = ["xmltojson"];
 
-  meta = {
+  meta = with pkgs.lib; {
     description = "The BBOT OSINT framework";
     homepage = "https://github.com/blacklanternsecurity/bbot";
-    license = pkgs.lib.licenses.mit;
+    license = licenses.mit;
+    maintainers = with maintainers; [];
   };
 }
+

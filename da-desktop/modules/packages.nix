@@ -21,6 +21,9 @@
     pciutils            
     glances           
     sniffnet
+    btop
+    speedcrunch
+                
                 #broken  protonvpn-gui             
     wineWowPackages.stable
     winetricks            
