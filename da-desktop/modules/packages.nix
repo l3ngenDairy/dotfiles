@@ -8,6 +8,7 @@
     };
     programs.kdeconnect.enable = true; 
     environment.systemPackages = with pkgs; [
+    uutils-coreutils-noprefix            
       # === MOUSE ===
     solaar
     neovim

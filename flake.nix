@@ -114,23 +114,6 @@ apps.x86_64-linux.home-manager = {
         pkgs = pkgsFor system;
       }).neovim;
 
-    # Define development shells
-    devShells = flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = pkgsFor system;
-    in {
-      default = pkgs.mkShell {
-        packages = with pkgs; [
-          nixpkgs-fmt
-          nil
-          git
-          python3
-          nodejs
-          rustc
-          cargo
-        ];
-      };
-    });
-
     # Pre-commit hooks
     checks = flake-utils.lib.eachDefaultSystem (system: {
       pre-commit-check = pre-commit-hooks.lib.${system}.run {
