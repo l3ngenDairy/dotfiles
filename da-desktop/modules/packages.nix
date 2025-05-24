@@ -17,6 +17,17 @@
     yazi                                # file manager rust
     evil-helix                          # batteries-included text editor with vim bindings          rust
     xh                                  # Friendly and fast tool for sending HTTP requests                 rust
+    dust                                # de + rust = dust. Like du but more intuitive
+    dua                                 # Tool to conveniently learn about the disk usage of directories
+    nushell                             # Modern shell written in Rust
+    ncspot                              # Spotify cli
+    fselect                             # Find files with SQL-like queries
+    rusty-man                           # Rust man pages
+    delta                               # Syntax-highlighting pager for git
+    ripgrep-all                         # Ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz and more usage rga
+    tokei                               # Program that allows you to count your code, quickly
+    wiki-tui                            # Simple and easy to use Wikipedia Text User Interface
+    
       # === MOUSE ===
     solaar                              # mouse viewer
     neovim
