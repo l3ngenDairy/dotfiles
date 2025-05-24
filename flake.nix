@@ -43,8 +43,6 @@ outputs = inputs @ {
 # Define system architecture (default to x86_64-linux)
 system = "x86_64-linux";
     
-
-
 # Helper function to generate a package set with overlays
 pkgsFor = system: import nixpkgs {
   inherit system;
@@ -73,8 +71,7 @@ mkSystem = modules: nixpkgs.lib.nixosSystem {
     nvf.nixosModules.default
   ];
 };
-
-    
+   
 in {
 nixosConfigurations = {
   # Desktop configuration
@@ -96,18 +93,20 @@ nixosConfigurations = {
   };
 
 };
-    # Add Home Manager as an app
+
+# Add Home Manager as an app
 apps.x86_64-linux.home-manager = {
   type = "app";
   program = "${home-manager.packages.${system}.default}/bin/home-manager";
 };
-    # Define Neovim package
+
+# Define Neovim package
 packages.${system}.neovim =
   (nvf.lib.neovimConfiguration {
     pkgs = pkgsFor system;
 }).neovim;
 
-    # Pre-commit hooks
+# Pre-commit hooks
 checks = flake-utils.lib.eachDefaultSystem (system: {
   pre-commit-check = pre-commit-hooks.lib.${system}.run {
     src = ./.;
@@ -119,7 +118,7 @@ checks = flake-utils.lib.eachDefaultSystem (system: {
   };
 });
 
-    # Formatter
+# Formatter
 formatter = flake-utils.lib.eachDefaultSystem (system: (pkgsFor system).nixpkgs-fmt);
   };
 }
