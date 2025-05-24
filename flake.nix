@@ -74,8 +74,10 @@
 
       ];
     };
-  in {
-  nixosConfigurations = {
+
+    
+in {
+nixosConfigurations = {
   # Desktop configuration
   da-desktop = nixpkgs.lib.nixosSystem {
     inherit system specialArgs;
@@ -94,15 +96,6 @@
     ];
   };
 
-  # laptop configuration
-  da-laptop = nixpkgs.lib.nixosSystem {
-    inherit system specialArgs;
-    modules = [
-      ./da-laptop/configuration.nix
-     nvf.nixosModules.default
-
-    ];
-  };
 };
     # Add Home Manager as an app
 apps.x86_64-linux.home-manager = {
@@ -110,24 +103,24 @@ apps.x86_64-linux.home-manager = {
   program = "${home-manager.packages.${system}.default}/bin/home-manager";
 };
     # Define Neovim package
-    packages.${system}.neovim =
+packages.${system}.neovim =
       (nvf.lib.neovimConfiguration {
         pkgs = pkgsFor system;
-      }).neovim;
+}).neovim;
 
     # Pre-commit hooks
-    checks = flake-utils.lib.eachDefaultSystem (system: {
-      pre-commit-check = pre-commit-hooks.lib.${system}.run {
-        src = ./.;
-        hooks = {
-          nixpkgs-fmt.enable = true;
-          statix.enable = true;
-          deadnix.enable = true;
-        };
-      };
-    });
+checks = flake-utils.lib.eachDefaultSystem (system: {
+  pre-commit-check = pre-commit-hooks.lib.${system}.run {
+    src = ./.;
+    hooks = {
+      nixpkgs-fmt.enable = true;
+      statix.enable = true;
+      deadnix.enable = true;
+    };
+  };
+});
 
     # Formatter
-    formatter = flake-utils.lib.eachDefaultSystem (system: (pkgsFor system).nixpkgs-fmt);
+formatter = flake-utils.lib.eachDefaultSystem (system: (pkgsFor system).nixpkgs-fmt);
   };
 }
