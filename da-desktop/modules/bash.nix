@@ -1,6 +1,6 @@
 { pkgs, ... }: {
   environment.systemPackages = [ pkgs.fastfetch ];      
-  programs.bash.interactiveShellInit = ''
+  programs.fish.interactiveShellInit = ''
     fastfetch
   '';
 }

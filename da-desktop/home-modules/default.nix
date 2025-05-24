@@ -4,5 +4,10 @@
   imports = [
                 # ./ollama-cuda.nix                  
  ];
+ 
+
+
+
+        
 }
 

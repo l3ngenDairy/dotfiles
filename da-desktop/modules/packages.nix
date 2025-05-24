@@ -8,9 +8,11 @@
     };
     programs.kdeconnect.enable = true; 
     environment.systemPackages = with pkgs; [
-    uutils-coreutils-noprefix            
+    fd #  is a simple, fast and user-friendly alternative to find           
+    fish  # fish shell 
+    uutils-coreutils-noprefix # rust implementation of coreutils   
       # === MOUSE ===
-    solaar
+    solaar # mouse viewer
     neovim
     vim
     handbrake            
