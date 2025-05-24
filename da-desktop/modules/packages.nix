@@ -8,11 +8,17 @@
     };
     programs.kdeconnect.enable = true; 
     environment.systemPackages = with pkgs; [
-    fd #  is a simple, fast and user-friendly alternative to find           
-    fish  # fish shell 
-    uutils-coreutils-noprefix # rust implementation of coreutils   
+    fd                                  # is a simple, fast and user-friendly alternative to find           rust implementation 
+    fish                                # fish shell rust implementation 
+    uutils-coreutils-noprefix           # rust implementation of coreutils  
+    gitui                               # fast git ui rust implementation 
+    dua                                 # Tool to conveniently learn about the disk usage of directories
+    hyperfine                           # benchmarking tool
+    yazi                                # file manager rust
+    evil-helix                          # batteries-included text editor with vim bindings          rust
+    xh                                  # Friendly and fast tool for sending HTTP requests                 rust
       # === MOUSE ===
-    solaar # mouse viewer
+    solaar                              # mouse viewer
     neovim
     vim
     handbrake            
@@ -43,35 +49,35 @@
     discord
     # -- office --
     anki # flashcard app
-    libreoffice-qt6-fresh # office suite 
-    hunspell # hunspell is libreoffice spellchecker
+    libreoffice-qt6-fresh               # office suite 
+    hunspell                            # hunspell is libreoffice spellchecker
     hunspellDicts.en-au           
-    obsidian # notes program
+    obsidian                            # markdown notes
     # -- media --
     vlc
     # -- files --
-    bat # cat with syntax highlighting
-    file # usage file <target> this will output the file type
-    p7zip # 7zip but better
-    ripgrep # better grep usage rg 
-    tree # shows files in a tree
-    unzip # unzips 
+    bat                                 # cat with syntax highlighting
+    file                                # usage file <target> this will output the file type
+    p7zip                               # 7zip but better
+    ripgrep                             # better grep usage rg 
+    tree                                # shows files in a tree
+    unzip                               # unzips 
     # -- image --
-    ffmpeg # used for media manipulatin
-    flameshot # screen shots 
+    ffmpeg                              # used for media manipulatin
+    flameshot                           # screen shots 
     # -- system --
-    fastfetch  # display system info updated version of neofetch
-    htop # task managet
+    fastfetch                           # display system info updated version of neofetch
+    htop                                # task managet
     # -- network --
-    tcpdump  #  Network sniffer      
-    cups # print service
-    curl # used for get and post requests
-    wget # used to get files from server
+    tcpdump                             # Network sniffer      
+    cups                                # print service
+    curl                                # used for get and post requests
+    wget                                # used to get files from server
     # === DEVELOPMENT ===
     # -- debugging --
-    gdb # GNU Project debugger, allows you to see what is going on `inside’ another program while it executes 
-    gef # Modern experience for GDB with advanced debugging features for exploit developers & reverse engineers
-    valgrind # Debugging and profiling tool suite
+    gdb                                 # GNU Project debugger, allows you to see what is going on `inside’ another program while it executes 
+    gef                                 # Modern experience for GDB with advanced debugging features for exploit developers & reverse engineers
+    valgrind                            # Debugging and profiling tool suite
     
     # -- libraries --
     # -- c --
@@ -127,8 +133,6 @@
     # -- theme --
     libsForQt5.qtstyleplugin-kvantum
     libsForQt5.qt5ct
-    waybar
-    wofi
   ];
 
   fonts.packages = with pkgs; [

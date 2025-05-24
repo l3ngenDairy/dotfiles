@@ -24,6 +24,10 @@
     "vm.overcommit_memory" = 1;
     "vm.max_map_count" = 1048576;
   };
+
+
+
+  users.defaultUserShell = pkgs.fish;      
   services.fwupd.enable = true;
   documentation.man.generateCaches = false; 
   hardware.enableAllFirmware = true;
