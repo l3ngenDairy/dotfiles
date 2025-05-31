@@ -8,6 +8,8 @@
     };
     programs.kdeconnect.enable = true; 
     environment.systemPackages = with pkgs; [
+    nvtopPackages.nvidia                # btop for nvidia
+
     grayjay
     fd                                  # is a simple, fast and user-friendly alternative to find           rust implementation 
     fish                                # fish shell rust implementation 

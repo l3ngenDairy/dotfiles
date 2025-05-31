@@ -7,7 +7,7 @@
     ./bluetooth.nix
     ./sound.nix
     ./virtmanager.nix
-                #  ./podman.nix            
+    ./podman.nix            
     ./kdeplasma.nix            
                 #./nvidia.nix
     ./boot.nix
