@@ -149,7 +149,10 @@
   services.desktopManager.plasma6.enable = true;
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "david";
-
+  
+  # PCSC-Lite daemon, to access smart cards
+  services.pcscd.enable = true;
+        
   # ===================================================================
   # SYSTEM SETTINGS
   # ===================================================================
@@ -229,7 +232,7 @@
     fastfetch
   '';
   programs.fish.shellAliases = {
-    cat = "bat";
+                #   cat = "bat";
   };
 
   # --- Firefox ---
@@ -292,9 +295,8 @@
   # ===================================================================
   # SYSTEM PACKAGES
   # ===================================================================
-
   environment.systemPackages = with pkgs; [
-
+    yubioath-flutter
     # === VIRTUALIZATION ===
     libvirt
     qemu

@@ -1,6 +1,5 @@
 { config, pkgs, ... }: {
   imports = [
-    ./home-modules
   ];
 
         # services.ollama-container.enable = true;
