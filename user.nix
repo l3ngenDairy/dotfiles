@@ -1,5 +1,5 @@
 { pkgs, ... }: {
-  programs.zsh.enable = true;
+        #  programs.zsh.enable = true;
   programs.fish.enable = true;
   users = {
     defaultUserShell = pkgs.fish;
@@ -7,7 +7,7 @@
     users.david = {
       isNormalUser = true;
       description = "david";
-      extraGroups = [ "networkmanager" "wheel" "input" "libvirtd" "libvirt" "docker" "podman" "kvm" "plugdev" ];
+      extraGroups = [ "networkmanager" "wheel" "input" "libvirtd" "libvirt" "docker" "podman" "kvm" ];
       packages = with pkgs; [fish];
     };
   };

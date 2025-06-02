@@ -1,124 +1,95 @@
 {
-description = "l3ngen dotfiles";
+  description = "l3ngen dotfiles";
 
-inputs = {
-  # Nix package sources
-  nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-  flake-utils.url = "github:numtide/flake-utils";
+  inputs = {
+    # Nix package sources
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
 
-  # Home Manager
-  home-manager = {
-    url = "github:nix-community/home-manager";
-    inputs.nixpkgs.follows = "nixpkgs";
-  };
+    # Home Manager
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-  # Hardware support
-  nixos-hardware.url = "github:NixOS/nixos-hardware";
+    # Hardware support
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
 
-  # NUR (Nix User Repository)
-  nur.url = "github:nix-community/NUR";
+    # NUR (Nix User Repository)
+    nur.url = "github:nix-community/NUR";
 
-  # Pre-commit hooks
-  pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+    # Pre-commit hooks
+    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
 
-  # Neovim flake
-  nvf = {  # Updated to match your working backup
-    url = "github:notashelf/nvf";
-    inputs.nixpkgs.follows = "nixpkgs";  # Added to match your backup
-  };
-
-};
-
-outputs = inputs @ {
-  self,
-  nixpkgs,
-  home-manager,
-  nixos-hardware,
-  nur,
-  pre-commit-hooks,
-  flake-utils,
-  nvf,
-  ...
-}: let
-# Define system architecture (default to x86_64-linux)
-system = "x86_64-linux";
-    
-# Helper function to generate a package set with overlays
-pkgsFor = system: import nixpkgs {
-  inherit system;
-  config.allowUnfree = true;
-  overlays = [
-    (final: prev: {
-      stable = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      };
-    })
-    nur.overlay
-  ];
-};
-
-# Shared arguments to pass to modules
-specialArgs = {
-  inherit inputs system;
-};
-
-# Function to create a NixOS system configuration
-mkSystem = modules: nixpkgs.lib.nixosSystem {
-  inherit system;
-  modules = modules ++ [
-    ./user.nix                                
-    nvf.nixosModules.default
-  ];
-};
-   
-in {
-nixosConfigurations = {
-  # Desktop configuration
-  da-desktop = nixpkgs.lib.nixosSystem {
-    inherit system specialArgs;
-    modules = [
-      ./da-desktop/configuration.nix
-      nvf.nixosModules.default
-      home-manager.nixosModules.home-manager
-      {
-        home-manager.useGlobalPkgs = true;
-        home-manager.useUserPackages = true;
-        home-manager.backupFileExtension = "backup";
-        
-        home-manager.users.david = import ./da-desktop/home.nix;
-      }
-                                                
-    ];
-  };
-
-};
-
-# Add Home Manager as an app
-apps.x86_64-linux.home-manager = {
-  type = "app";
-  program = "${home-manager.packages.${system}.default}/bin/home-manager";
-};
-
-# Define Neovim package
-packages.${system}.neovim =
-  (nvf.lib.neovimConfiguration {
-    pkgs = pkgsFor system;
-}).neovim;
-
-# Pre-commit hooks
-checks = flake-utils.lib.eachDefaultSystem (system: {
-  pre-commit-check = pre-commit-hooks.lib.${system}.run {
-    src = ./.;
-    hooks = {
-      nixpkgs-fmt.enable = true;
-      statix.enable = true;
-      deadnix.enable = true;
+    # Neovim flake
+    nvf = {
+      url = "github:notashelf/nvf";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-});
 
-# Formatter
-formatter = flake-utils.lib.eachDefaultSystem (system: (pkgsFor system).nixpkgs-fmt);
+  outputs = inputs @ {
+    self,
+    nixpkgs,
+    home-manager,
+    nixos-hardware,
+    nur,
+    pre-commit-hooks,
+    flake-utils,
+    nvf,
+    ...
+  }: let
+    # Define system architecture
+    system = "x86_64-linux";
+    
+    # Helper function to generate a package set with overlays
+    pkgsFor = system: import nixpkgs {
+      inherit system;
+      config.allowUnfree = true;
+      overlays = [
+        (final: prev: {
+          stable = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
+        })
+        nur.overlay
+      ];
+    };
+  in {
+    nixosConfigurations = {
+      # Desktop configuration
+      da-desktop = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./da-desktop/configuration.nix
+          ./user.nix
+          nvf.nixosModules.default
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
+            home-manager.users.david = import ./da-desktop/home.nix;
+          }
+        ];
+      };
+    };
+
+    # Pre-commit hooks
+    checks = flake-utils.lib.eachDefaultSystem (system: {
+      pre-commit-check = pre-commit-hooks.lib.${system}.run {
+        src = ./.;
+        hooks = {
+          nixpkgs-fmt.enable = true;
+          statix.enable = true;
+          deadnix.enable = true;
+        };
+      };
+    });
+
+    # Formatter
+    formatter = flake-utils.lib.eachDefaultSystem (system: (pkgsFor system).nixpkgs-fmt);
   };
 }

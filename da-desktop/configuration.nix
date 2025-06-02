@@ -23,7 +23,6 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ../user.nix
     ];
 
   # ===================================================================
@@ -185,7 +184,7 @@
   };
 
   environment.sessionVariables = {
-    STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
+    STEAM_EXTRA_COMPAT_TOOLS_PATHS = "{HOME}/.steam/root/compatibilitytools.d";
   };
 
   # --- Performance ---
@@ -202,6 +201,7 @@
   # ===================================================================
   # BUILT-IN PROGRAMS & SERVICES
   # ===================================================================
+
 
   # --- Vim/Neovim ---
   programs.vim.enable = true;
@@ -230,10 +230,7 @@
   # --- Fish Shell ---
   programs.fish.interactiveShellInit = ''
     fastfetch
-  '';
-  programs.fish.shellAliases = {
-                #   cat = "bat";
-  };
+  ''; 
 
   # --- Firefox ---
   programs.firefox.enable = true;
@@ -289,195 +286,213 @@
 
   nixpkgs.config = {
     allowUnfree = true;
-    permittedInsecurePackaages = ["python-2.7.18.8" "electron-25.9.0" ];
+    permittedInsecurePackages = ["python-2.7.18.8" "electron-25.9.0" ];
   };
 
   # ===================================================================
   # SYSTEM PACKAGES
   # ===================================================================
-  environment.systemPackages = with pkgs; [
-    yubioath-flutter
-    # === VIRTUALIZATION ===
-    libvirt
-    qemu
-    spice-vdagent
-    spice-gtk
-    virt-manager
 
-    # === GAMING ===
-    mangohud
-    bottles
-    heroic
-    lutris
-    prismlauncher
-    protonup
-    umu-launcher
+# ===================================================================
+# SYSTEM PACKAGES
+# ===================================================================
+# LEGEND:
+# [CORE]      - Essential tools/utilities
+# [VIRT]      - Virtualization
+# [GAMING]    - Gaming & Launchers
+# [AUDIO]     - Audio Tools
+# [MONITOR]   - System Monitoring
+# [RUST]      - Rust-Based Utilities
+# [HARDWARE]  - Hardware Tools
+# [EDITORS]   - Text/Code Editors
+# [WEBCAM]    - Webcam Utilities
+# [MEDIA]     - Media & Productivity
+# [WINE]      - Windows Compatibility
+# [APPS]      - General Applications
+# [BROWSERS]  - Web Browsers
+# [COMM]      - Communication
+# [OFFICE]    - Office Tools
+# [FILES]     - File Utilities
+# [MEDIA-X]   - Image/Video Tools
+# [NETWORK]   - Networking & Printing
+# [DEV]       - Development Tools
+# [SECURITY]  - Security / Pentesting
+# [SDR]       - Software Defined Radio
+# [XORG]      - X11 and GUI Tools
+# ===================================================================
 
-    # === SOUND ===
-    alsa-utils     # For `aplay`, ALSA testing
-    pavucontrol    # GUI volume control
+environment.systemPackages = with pkgs; [
 
-    # === SYSTEM MONITORING ===
-    nvtopPackages.nvidia                # btop for nvidia
-    fastfetch
-    glances
-    btop
-    htop                                # task manager
+  # [CORE]
+  file                 # Identify file types
+  curl                 # Command-line tool for data transfer
+  wget                 # Download files from the web
+  unzip                # Extract .zip files
+  tree                 # Display directories as a tree
+  bat                  # cat clone with syntax highlighting
+  ripgrep              # Faster alternative to grep
+  exiftool             # Read/write metadata in files
 
-    # === RUST TOOLS ===
-    fd                                  # is a simple, fast and user-friendly alternative to find           rust implementation
-    fish                                # fish shell rust implementation
-    uutils-coreutils-noprefix           # rust implementation of coreutils
-    gitui                               # fast git ui rust implementation
-    dua                                 # Tool to conveniently learn about the disk usage of directories
-    hyperfine                           # benchmarking tool
-    yazi                                # file manager rust
-    xh                                  # Friendly and fast tool for sending HTTP requests                 rust
-    dust                                # de + rust = dust. Like du but more intuitive
-    nushell                             # Modern shell written in Rust
-    ncspot                              # Spotify cli
-    fselect                             # Find files with SQL-like queries
-    rusty-man                           # Rust man pages
-    delta                               # Syntax-highlighting pager for git
-    ripgrep-all                         # Ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz and more usage rga
-    tokei                               # Program that allows you to count your code, quickly
-    wiki-tui                            # Simple and easy to use Wikipedia Text User Interface
+  # [VIRT]
+  libvirt              # Manage virtual machines
+  qemu                 # Emulator and virtualizer
+  spice-vdagent        # Spice guest tools for clipboard/display
+  spice-gtk            # GTK support for Spice clients
+  virt-manager         # GUI for managing virtual machines
+  looking-glass-client # Share VM screen via PCI passthrough
 
-    # === HARDWARE TOOLS ===
-    solaar                              # mouse viewer for logitech required sudo to see mouse
-    v4l-utils                           # Webcam configuration tools
-    usbutils
-    pciutils
-    vulkan-tools
+  # [GAMING]
+  mangohud             # In-game performance overlay
+  bottles              # Wine app manager
+  heroic               # Epic Games launcher
+  lutris               # Game manager for all platforms
+  prismlauncher        # Custom Minecraft launcher
+  protonup             # Install Proton-GE versions
+  umu-launcher         # Launcher for games/emulators
 
-    # === EDITORS ===
-    neovim
-    vim
+  # [AUDIO]
+  alsa-utils           # ALSA sound utilities
+  pavucontrol          # GUI for PulseAudio volume control
 
-    # === WEBCAMS ===
-    cheese      # GNOME webcam testing app
-    guvcview    # Another webcam viewer and test tool
+  # [MONITOR]
+  nvtopPackages.nvidia # GPU usage monitor (NVIDIA)
+  fastfetch            # System info summary tool
+  glances              # Real-time system monitoring
+  btop                 # Resource monitor with UI
+  htop                 # Interactive process viewer
 
-    # === MEDIA & PRODUCTIVITY ===
-    transmission_4-gtk
-    handbrake
-    kepubify
-    calibre
-    ciscoPacketTracer8
-    looking-glass-client
-    sniffnet
-    speedcrunch
+  # [RUST]
+  fd                   # Fast file search (like `find`)
+  fish                 # User-friendly shell (Rust-based)
+  uutils-coreutils-noprefix # Coreutils rewrite in Rust
+  gitui                # TUI for Git repositories
+  dua                  # Disk usage analyzer
+  hyperfine            # Command-line benchmark tool
+  yazi                 # TUI file manager
+  xh                   # Fast HTTP request tool (like curl)
+  dust                 # Disk usage with intuitive UI
+  nushell              # Modern shell with structured data
+  ncspot               # Spotify client in terminal
+  fselect              # File search with SQL-like queries
+  rusty-man            # Man pages for Rust packages
+  delta                # Git diff with syntax highlighting
+  ripgrep-all          # ripgrep + search in PDFs, docs, etc.
+  tokei                # Count lines of code by language
+  wiki-tui             # Wikipedia reader in terminal
 
-    # === WINE ===
-    wineWowPackages.stable
-    winetricks
+  # [HARDWARE]
+  solaar               # Logitech device manager
+  v4l-utils            # Video4Linux tools for webcams
+  usbutils             # Tools to list USB devices
+  pciutils             # Tools to inspect PCI devices
+  vulkan-tools         # Vulkan diagnostics and info
 
-    # === APPLICATIONS ===
-    freecad
-    sqlite
-    wl-clipboard
-    cliphist
-    grayjay
+  # [EDITORS]
+  neovim               # Modern extensible Vim-based editor
 
-    # --- Browsers ---
-    firefox
+  # [WEBCAM]
+  cheese               # GNOME webcam viewer
+  guvcview             # GTK webcam test app
+  zoom-us
 
-    # --- Communication ---
-    discord
+  # [MEDIA]
+  transmission_4-gtk   # BitTorrent client (GTK)
+  handbrake            # Video transcoder/converter
+  kepubify             # Convert eBooks for Kobo
+  calibre              # eBook library manager
+  ciscoPacketTracer8   # Network simulation tool
+  sniffnet             # Network packet monitor
+  speedcrunch          # Scientific calculator
 
-    # --- Office ---
-    anki # flashcard app
-    libreoffice-qt6-fresh               # office suite
-    hunspell                            # hunspell is libreoffice spellchecker
-    hunspellDicts.en-au
-    obsidian                            # markdown notes
+  # [WINE]
+  wineWowPackages.stable # Run Windows apps
+  winetricks           # Install Windows DLLs/fonts for Wine
 
-    # --- Media ---
-    vlc
+  # [APPS]
+  freecad              # 3D parametric modeling
+  sqlite               # Lightweight SQL database
+  wl-clipboard         # Wayland clipboard utilities
+  cliphist             # Clipboard history manager
+  grayjay              # Modern open-source YouTube client
 
-    # --- File Management ---
-    bat                                 # cat with syntax highlighting
-    file                                # usage file <target> this will output the file type
-    p7zip                               # 7zip but better
-    ripgrep                             # better grep usage rg
-    tree                                # shows files in a tree
-    unzip                               # unzips
+  # [BROWSERS]
+  firefox              # Mozilla Firefox browser
 
-    # --- Image & Video ---
-    ffmpeg                              # used for media manipulation
-    flameshot                           # screen shots
+  # [COMM]
+  discord              # Voice/text chat for communities
 
-    # --- Network ---
-    tcpdump                             # Network sniffer
-    cups                                # print service
-    curl                                # used for get and post requests
-    wget                                # used to get files from server
+  # [OFFICE]
+  anki                 # Flashcard-based study tool
+  libreoffice-qt6-fresh # Office suite with Qt interface
+  hunspell             # Spell checking engine
+  hunspellDicts.en-au  # Australian English dictionary
+  obsidian             # Markdown-based note-taking app
 
-    # === DEVELOPMENT ===
+  # [FILES]
+  p7zip                # 7z compression utility
 
-    # --- Debugging ---
-    gdb                                 # GNU Project debugger, allows you to see what is going on `inside' another program while it executes
-    gef                                 # Modern experience for GDB with advanced debugging features for exploit developers & reverse engineers
-    valgrind                            # Debugging and profiling tool suite
+  # [MEDIA-X]
+  ffmpeg               # Audio/video conversion toolkit
+  flameshot            # Screenshot capture tool
 
-    # --- C/C++ ---
-    gcc
-    clang
+  # [NETWORK]
+  tcpdump              # Command-line network sniffer
+  cups                 # Printing system for Unix
 
-    # --- Tools ---
-    git
-    exiftool
+  # [DEV]
+  gdb                  # GNU debugger
+  gef                  # GDB plugin for reverse engineering
+  valgrind             # Memory debugging and profiling
+  gcc                  # GNU C compiler
+  clang                # LLVM C/C++ compiler
+  git                  # Version control system
+  python3              # Python language
+  pipx                 # Install/run Python apps in isolation
+  python312Packages.cli-helpers # CLI helpers for Python tools
+  python312Packages.netifaces   # Network interface info
+  python312Packages.pip         # Python package manager
+  linux-manual         # Linux command reference
+  man-pages            # Traditional Unix man pages
+  man-pages-posix      # POSIX-specific man pages
 
-    # --- Python ---
-    python3
-    pipx
-    python312Packages.cli-helpers
-    python312Packages.netifaces
-    python312Packages.pip
+  # [SECURITY]
+  aircrack-ng          # Crack WiFi passwords
+  ffuf                 # Fuzzer for web paths
+  ghidra-bin           # NSA reverse engineering tool
+  gobuster             # Directory brute-forcing
+  metasploit           # Security testing framework
+  netcat-openbsd       # Network debugging tool
+  nmap                 # Network scanner
+  ropgadget            # Gadget finder for ROP exploits
+  sqlmap               # SQL injection testing
+  thc-hydra            # Password brute-forcer
+  social-engineer-toolkit # Phishing & SE attack toolset
+  wireshark            # Network packet analyzer
+  wordlists            # Common passwords for cracking
+  hashcat              # Password hash cracker
 
-    # --- Man Pages ---
-    linux-manual
-    man-pages
-    man-pages-posix
+  # [SDR]
+  pkg-config           # Build helper for C/C++
+  rtl-sdr              # RTL-based SDR driver
+  rtl-sdr-librtlsdr    # Library for rtl-sdr
+  sdrpp                # SDR# inspired SDR software
 
-    # --- Security & Pentesting ---
-    aircrack-ng
-    ffuf
-    ghidra-bin
-    gobuster
-    metasploit
-    netcat-openbsd
-    nmap
-    ropgadget
-    sqlmap
-    thc-hydra
-    social-engineer-toolkit
-    wireshark
-    wordlists
-    hashcat
+  # [XORG]
+  arandr               # Simple GUI for screen layout
+  autorandr            # Auto-adjust screen setup
+  lxappearance         # GTK theme/appearance tool
+  picom                # X compositor (for transparency, etc.)
+  xorg.xdpyinfo        # Display server info
+  xorg.xrandr          # Resize/rotate screen
+  libsForQt5.qtstyleplugin-kvantum # Qt theme engine
+  libsForQt5.qt5ct     # Configure Qt5 appearance
 
-    # --- SDR ---
-    pkg-config
-    rtl-sdr
-    rtl-sdr-librtlsdr
-    sdrpp
+  # [OTHER]
+  yubioath-flutter     # 2FA TOTP tool for Yubikeys (GUI)
+];
 
-    # === XORG ===
 
-    # --- Applications ---
-    arandr
-    autorandr
-    lxappearance
-    picom
 
-    # --- Tools ---
-    xorg.xdpyinfo # info on xserver
-    xorg.xrandr
-
-    # --- Themes ---
-    libsForQt5.qtstyleplugin-kvantum
-    libsForQt5.qt5ct
-  ];
 
   # ===================================================================
   # FONTS

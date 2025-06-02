@@ -1,174 +1,210 @@
 { config, pkgs, lib, ... }:
-
+# ===================================================================
+# NIXOS CONFIGURATION LEGEND
+# ===================================================================
+#
+# This configuration is organized in the following order:
+#
+# 1.  SYSTEM BASICS          - Basic system identification and imports
+# 2.  BOOT CONFIGURATION     - Boot loader, kernel packages, and parameters
+# 3.  HARDWARE CONFIGURATION - CPU, GPU (NVIDIA), Bluetooth, firmware
+# 4.  STORAGE & FILESYSTEMS  - Drive mounts, swap, filesystem settings
+# 5.  CORE SERVICES & DRIVERS- Networking, sound (PipeWire), printing, display
+# 6.  SYSTEM SETTINGS        - Time/locale, documentation, shell, environment
+# 7.  BUILT-IN PROGRAMS      - Vim/Neovim, Fish shell, Firefox, KDE Connect
+# 8.  VIRTUALIZATION         - Podman (Docker), QEMU/KVM, virt-manager
+# 9.  GAMING                 - Steam, gamemode, transmission
+# 10. PACKAGE CONFIGURATION  - nixpkgs settings, unfree packages
+# 11. SYSTEM PACKAGES        - All installable packages (organized by category)
+# 12. FONTS                  - Font packages
+# 13. NIX CONFIGURATION      - Garbage collection, experimental features
+#
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ../user.nix
     ];
-boot.loader = {
-  systemd-boot.enable = true;
-  efi.canTouchEfiVariables = true;
-};
-boot.kernelPackages = pkgs.linuxPackages_latest;
-boot.kernelParams = [ "lockdown=confidentiality" ];
 
+  # ===================================================================
+  # SYSTEM BASICS
+  # ===================================================================
 
+  system.stateVersion = "25.05";
+  networking.hostName = "da-desktop";
 
-hardware.cpu.amd.updateMicrocode = true;
+  # ===================================================================
+  # BOOT CONFIGURATION
+  # ===================================================================
 
-
-#  === DRIVES ===        
-services.fstrim.enable = true;
-fileSystems = {
-  "/media/drive-1" = {
-    device = "/dev/disk/by-uuid/61d1bd2e-1784-4aea-a561-7198ae6b6829";
-    fsType = "ext4";
-    options = [ "defaults" "nofail" "users" "exec" ];
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
   };
-  "/media/drive-2" = {
-    device = "/dev/disk/by-uuid/c54e517e-44cc-4a7e-9230-0905134ee93f";
-    fsType = "ext4";
-    options = [ "defaults" "nofail" "users" "exec" ];
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelParams = [ "lockdown=confidentiality" ];
+  boot.kernelModules = [ "uvcvideo" ];
+
+  # ===================================================================
+  # HARDWARE CONFIGURATION
+  # ===================================================================
+
+  # --- CPU ---
+  hardware.cpu.amd.updateMicrocode = true;
+
+  # --- Graphics ---
+  hardware.graphics.enable = true;
+
+  # --- NVIDIA ---
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia = {
+    modesetting.enable = true;
+    open = false;
+    powerManagement.enable = false;
+    nvidiaSettings = true;
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
-};
+  hardware.nvidia-container-toolkit.enable = true;
 
-swapDevices = [
-  {
-    device = "/swapfile";
-    size = 4096; # Size in MB (4GB)
-  }
-];
-boot.kernel.sysctl = {
-  "vm.overcommit_memory" = 1;
-  "vm.max_map_count" = 1048576;
-};
+  # --- Bluetooth ---
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+    settings = {
+      General = {
+        Experimental = true;
+        Class = "0x000540";  # This sets the device class to include keyboard functionality
+      };
+      Policy = {
+        AutoEnable = true;
+      };
+    };
+  };
 
-#  === NETWORKING ===
+  # --- Firmware ---
+  hardware.enableAllFirmware = true;
+  services.fwupd.enable = true;
 
+  # ===================================================================
+  # STORAGE & FILESYSTEMS
+  # ===================================================================
 
-networking = {
+  services.fstrim.enable = true;
+  fileSystems = {
+    "/media/drive-1" = {
+      device = "/dev/disk/by-uuid/61d1bd2e-1784-4aea-a561-7198ae6b6829";
+      fsType = "ext4";
+      options = [ "defaults" "nofail" "users" "exec" ];
+    };
+    "/media/drive-2" = {
+      device = "/dev/disk/by-uuid/c54e517e-44cc-4a7e-9230-0905134ee93f";
+      fsType = "ext4";
+      options = [ "defaults" "nofail" "users" "exec" ];
+    };
+  };
+
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 4096; # Size in MB (4GB)
+    }
+  ];
+
+  boot.kernel.sysctl = {
+    "vm.overcommit_memory" = 1;
+    "vm.max_map_count" = 1048576;
+  };
+
+  # ===================================================================
+  # CORE SERVICES & DRIVERS
+  # ===================================================================
+
+  # --- Networking ---
+  networking = {
     networkmanager.enable = true;
-};
-
-
-
-#  === PRINTING ===
-
-services.printing = {
-  enable = true;
-  drivers = [ pkgs.hplip ];
-};
-
-#  === TIME ===
-time.timeZone = "Pacific/Auckland";
-i18n.defaultLocale = "en_NZ.UTF-8";
-        
-
-#  === DISPLAY MANAGER ===
-  # Enable the X server (needed for graphical desktop environments)
-services.xserver.enable = true;
-  # Enable the SDDM login manager (used to graphically log into KDE Plasma)
-services.displayManager.sddm.enable = true;
-  # Enable KDE Plasma 6 desktop environment
-services.desktopManager.plasma6.enable = true;
-  # Enable automatic login without needing to enter password
-services.displayManager.autoLogin.enable = true;
-  # Set the user that will be automatically logged in
-services.displayManager.autoLogin.user = "david";
-# --- Performance Tweaks ---
-   # Plasma 6 Specific: Exclude some heavy default packages if you want a lighter Plasma
-environment.plasma6.excludePackages = with pkgs.kdePackages; [
-    konqueror     # Heavy old browser
-    khelpcenter   # Not needed usually
-    plasma-sdk    # Developer tools, not needed for normal users
-];
-
-#  === MAN PAGES ===
-documentation = {
-  enable = true;
-  dev.enable = true;
-  man.enable = true;
-};
-
-
-#  === SOUND ===
-services.pulseaudio.enable = false;      
-security.rtkit.enable = true;
-services.pipewire = {
-  enable = true;
-  alsa.enable = true;
-  alsa.support32Bit = true;
-  pulse.enable = true;
-  jack.enable = true;
-  wireplumber.enable = true;
-  audio.enable = true;
-};
-        
-environment.variables = {
-  PIPEWIRE_LATENCY = "512/48000";  # Balanced latency setting
-};
-
-
-#  === BLUETOOTH ===
-hardware.bluetooth = {
-  enable = true;
-  powerOnBoot = true;
-  settings = {
-    General = {
-                                # Enable = "Source,Sink,Media,Socket,HID";  # Added HID explicitly
-      Experimental = true;
-      Class = "0x000540";  # This sets the device class to include keyboard functionality
-    };
-    Policy = {
-      AutoEnable = true;
-    };
-  };
-};
-
-
-#  === NVIDIA PROPRIETARY ===
-
-  # Enable NVIDIA graphics drivers
-hardware.graphics.enable = true;
-
-  # Specify NVIDIA as the video driver for X server
-services.xserver.videoDrivers = [ "nvidia" ];
-
-  # NVIDIA-specific configuration
-hardware.nvidia = {
-    # Enable modesetting for better compatibility
-  modesetting.enable = true;
-  open = false;
-  powerManagement.enable = false;           
-    # Enable the NVIDIA settings application
-  nvidiaSettings = true;
-    # Use the stable version of the NVIDIA driver package
-  package = config.boot.kernelPackages.nvidiaPackages.stable;
-};
-
-# === SHELL ===
-
-  programs.fish.interactiveShellInit = ''
-    fastfetch
-  '';
-  programs.fish.shellAliases = {
-        cat = "bat";
-                # ll = "ls -la";
   };
 
+  # --- Sound ---
+  services.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    jack.enable = true;
+    wireplumber.enable = true;
+    audio.enable = true;
+  };
 
+  # --- Printing ---
+  services.printing = {
+    enable = true;
+    drivers = [ pkgs.hplip ];
+  };
+
+  # --- Display Manager ---
+  services.xserver.enable = true;
+  services.displayManager.sddm.enable = true;
+  services.desktopManager.plasma6.enable = true;
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "david";
+  
+  # PCSC-Lite daemon, to access smart cards
+  services.pcscd.enable = true;
         
-# === VIM SETTINGS ===
+  # ===================================================================
+  # SYSTEM SETTINGS
+  # ===================================================================
+
+  # --- Time & Locale ---
+  time.timeZone = "Pacific/Auckland";
+  i18n.defaultLocale = "en_NZ.UTF-8";
+
+  # --- Documentation ---
+  documentation = {
+    enable = true;
+    dev.enable = true;
+    man.enable = true;
+  };
+  documentation.man.generateCaches = false;
+
+  # --- Shell ---
+  users.defaultUserShell = pkgs.fish;
+
+  # --- Groups ---
+  users.groups.video = {};
+
+  # --- Environment Variables ---
   environment.variables = {
     EDITOR = "nvim";
     RANGER_LOAD_DEFAULT_RC = "FALSE";
     XKB_DEFAULT_LAYOUT = "us";
     GSETTINGS_BACKEND = "keyfile";
+    PIPEWIRE_LATENCY = "512/48000";  # Balanced latency setting
   };
-        
-  programs.vim.enable = true;      
-  programs.nvf = { # enable nvf
+
+  environment.sessionVariables = {
+    STEAM_EXTRA_COMPAT_TOOLS_PATHS = "{HOME}/.steam/root/compatibilitytools.d";
+  };
+
+  # --- Performance ---
+  services.system76-scheduler.settings.cfsProfiles.enable = true;
+  services.upower.enable = lib.mkForce false;
+
+  # --- Plasma 6 Specific ---
+  environment.plasma6.excludePackages = with pkgs.kdePackages; [
+    konqueror     # Heavy old browser
+    khelpcenter   # Not needed usually
+    plasma-sdk    # Developer tools, not needed for normal users
+  ];
+
+  # ===================================================================
+  # BUILT-IN PROGRAMS & SERVICES
+  # ===================================================================
+
+  # --- Vim/Neovim ---
+  programs.vim.enable = true;
+  programs.nvf = {
     enable = true;
     settings = {
       vim = {
@@ -189,69 +225,112 @@ hardware.nvidia = {
       };
     };
   };
-#  === PODMAN ===
-virtualisation.podman = {
-  enable = true;
-  dockerCompat = true; # Optional: enables `docker` CLI
-};
 
-# Enables GPU passthrough for containers
-hardware.nvidia-container-toolkit.enable = true;
+  # --- Fish Shell ---
+  programs.fish.interactiveShellInit = ''
+    fastfetch
+  '';
+  programs.fish.shellAliases = {
+                #   cat = "bat";
+  };
 
+  # --- Firefox ---
+  programs.firefox.enable = true;
 
+  # --- KDE Connect ---
+  programs.kdeconnect.enable = true;
 
+  # ===================================================================
+  # VIRTUALIZATION
+  # ===================================================================
 
+  # --- Podman ---
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true; # Optional: enables `docker` CLI
+  };
 
-#  === PROGRAMS ===        
-programs.firefox.enable = true;
-programs.kdeconnect.enable = true; 
-
-services.transmission.settings = {
-  download-dir = "${config.services.transmission.home}/Downloads";
-};
-
-        
-nixpkgs.config = {
-      allowUnfree = true;
-      permittedInsecurePackaages = ["python-2.7.18.8" "electron-25.9.0" ]; 
+  # --- QEMU/KVM ---
+  virtualisation = {
+    libvirtd = {
+      enable = true;
+      qemu = {
+        ovmf.enable = true;       # UEFI boot support (for Windows, etc.)
+        runAsRoot = true;         # Optional: can be omitted if not needed
+      };
     };
-   
-environment.systemPackages = with pkgs; [
+    spiceUSBRedirection.enable = true;  # SPICE USB redirection
+  };
+  programs.virt-manager.enable = true;   # GUI for managing VMs
 
-    #  === VIRTUALISATION ===
+  # ===================================================================
+  # GAMING
+  # ===================================================================
+
+  # --- Steam ---
+  programs.steam = {
+    enable = true;
+    gamescopeSession.enable = true;
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+    localNetworkGameTransfers.openFirewall = true;
+  };
+  programs.gamemode.enable = true;
+
+  # --- Transmission ---
+  services.transmission.settings = {
+    download-dir = "${config.services.transmission.home}/Downloads";
+  };
+
+  # ===================================================================
+  # PACKAGE CONFIGURATION
+  # ===================================================================
+
+  nixpkgs.config = {
+    allowUnfree = true;
+    permittedInsecurePackages = ["python-2.7.18.8" "electron-25.9.0" ];
+  };
+
+  # ===================================================================
+  # SYSTEM PACKAGES
+  # ===================================================================
+  environment.systemPackages = with pkgs; [
+    yubioath-flutter
+    # === VIRTUALIZATION ===
     libvirt
     qemu
     spice-vdagent
-    spice-gtk            
-    virt-manager 
-
+    spice-gtk
+    virt-manager
 
     # === GAMING ===
     mangohud
     bottles
     heroic
     lutris
-    prismlauncher  
+    prismlauncher
     protonup
-    umu-launcher     
-   
+    umu-launcher
+
     # === SOUND ===
     alsa-utils     # For `aplay`, ALSA testing
     pavucontrol    # GUI volume control
 
-
-                
+    # === SYSTEM MONITORING ===
     nvtopPackages.nvidia                # btop for nvidia
     fastfetch
-    grayjay
-    fd                                  # is a simple, fast and user-friendly alternative to find           rust implementation 
-    fish                                # fish shell rust implementation 
-    uutils-coreutils-noprefix           # rust implementation of coreutils  
-    gitui                               # fast git ui rust implementation 
+    glances
+    btop
+    htop                                # task manager
+
+    # === RUST TOOLS ===
+    fd                                  # is a simple, fast and user-friendly alternative to find           rust implementation
+    fish                                # fish shell rust implementation
+    uutils-coreutils-noprefix           # rust implementation of coreutils
+    gitui                               # fast git ui rust implementation
     dua                                 # Tool to conveniently learn about the disk usage of directories
     hyperfine                           # benchmarking tool
     yazi                                # file manager rust
-                #    evil-helix                          # batteries-included text editor with vim bindings   tested it out did not have ctl v selection       rust
     xh                                  # Friendly and fast tool for sending HTTP requests                 rust
     dust                                # de + rust = dust. Like du but more intuitive
     nushell                             # Modern shell written in Rust
@@ -262,98 +341,104 @@ environment.systemPackages = with pkgs; [
     ripgrep-all                         # Ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz and more usage rga
     tokei                               # Program that allows you to count your code, quickly
     wiki-tui                            # Simple and easy to use Wikipedia Text User Interface
-    
-    # === MOUSE ===
-    solaar                              # mouse viewer for logitech required sudo to see mouse 
 
-    # === EDITORS ===            
+    # === HARDWARE TOOLS ===
+    solaar                              # mouse viewer for logitech required sudo to see mouse
+    v4l-utils                           # Webcam configuration tools
+    usbutils
+    pciutils
+    vulkan-tools
+
+    # === EDITORS ===
     neovim
-    vim
-    
+
     # === WEBCAMS ===
-    v4l-utils   # Webcam configuration tools
     cheese      # GNOME webcam testing app
     guvcview    # Another webcam viewer and test tool
 
-
-    transmission_4-gtk 
-    handbrake            
-    kepubify            
-    calibre           
-    ciscoPacketTracer8            
-    looking-glass-client            
-    usbutils
-    pciutils            
-    glances           
+    # === MEDIA & PRODUCTIVITY ===
+    transmission_4-gtk
+    handbrake
+    kepubify
+    calibre
+    ciscoPacketTracer8
+    looking-glass-client
     sniffnet
-    btop
     speedcrunch
-                
-                #broken  protonvpn-gui             
+
+    # === WINE ===
     wineWowPackages.stable
-    winetricks            
-    freecad 
+    winetricks
+
+    # === APPLICATIONS ===
+    freecad
     sqlite
-    vulkan-tools
     wl-clipboard
     cliphist
-       # === APPS ===
+    grayjay
 
-     # -- browsers --
+    # --- Browsers ---
     firefox
-       # -- fun --
+
+    # --- Communication ---
     discord
-    # -- office --
+
+    # --- Office ---
     anki # flashcard app
-    libreoffice-qt6-fresh               # office suite 
+    libreoffice-qt6-fresh               # office suite
     hunspell                            # hunspell is libreoffice spellchecker
-    hunspellDicts.en-au           
+    hunspellDicts.en-au
     obsidian                            # markdown notes
-    # -- media --
+
+    # --- Media ---
     vlc
-    # -- files --
+
+    # --- File Management ---
     bat                                 # cat with syntax highlighting
     file                                # usage file <target> this will output the file type
     p7zip                               # 7zip but better
-    ripgrep                             # better grep usage rg 
+    ripgrep                             # better grep usage rg
     tree                                # shows files in a tree
-    unzip                               # unzips 
-    # -- image --
-    ffmpeg                              # used for media manipulatin
-    flameshot                           # screen shots 
-    # -- system --
-    fastfetch                           # display system info updated version of neofetch
-    htop                                # task managet
-    # -- network --
-    tcpdump                             # Network sniffer      
+    unzip                               # unzips
+
+    # --- Image & Video ---
+    ffmpeg                              # used for media manipulation
+    flameshot                           # screen shots
+
+    # --- Network ---
+    tcpdump                             # Network sniffer
     cups                                # print service
     curl                                # used for get and post requests
     wget                                # used to get files from server
+
     # === DEVELOPMENT ===
-    # -- debugging --
-    gdb                                 # GNU Project debugger, allows you to see what is going on `inside’ another program while it executes 
+
+    # --- Debugging ---
+    gdb                                 # GNU Project debugger, allows you to see what is going on `inside' another program while it executes
     gef                                 # Modern experience for GDB with advanced debugging features for exploit developers & reverse engineers
     valgrind                            # Debugging and profiling tool suite
-    
-    # -- libraries --
-    # -- c --
+
+    # --- C/C++ ---
     gcc
     clang
-    # -- tools --
+
+    # --- Tools ---
     git
     exiftool
-    # -- python --
+
+    # --- Python ---
     python3
     pipx
     python312Packages.cli-helpers
     python312Packages.netifaces
     python312Packages.pip
-    # (python3.withPackages (ps: with ps; [ requests ]))
-    # -- man pages --
+
+    # --- Man Pages ---
     linux-manual
     man-pages
     man-pages-posix
-    # -- hacking --
+
+    # --- Security & Pentesting ---
     aircrack-ng
     ffuf
     ghidra-bin
@@ -369,115 +454,52 @@ environment.systemPackages = with pkgs; [
     wordlists
     hashcat
 
-    # -- sdr --
+    # --- SDR ---
     pkg-config
     rtl-sdr
     rtl-sdr-librtlsdr
     sdrpp
 
     # === XORG ===
-    # -- applications --
-    # -- tools --
-    xorg.xdpyinfo # info on xserver
-    # -- display --
+
+    # --- Applications ---
     arandr
     autorandr
     lxappearance
     picom
+
+    # --- Tools ---
+    xorg.xdpyinfo # info on xserver
     xorg.xrandr
 
-    # -- theme --
+    # --- Themes ---
     libsForQt5.qtstyleplugin-kvantum
     libsForQt5.qt5ct
-];
+  ];
 
-# === STEAM ===
+  # ===================================================================
+  # FONTS
+  # ===================================================================
 
-
-programs.steam = {
-  enable = true;
-  gamescopeSession.enable = true;            
-  remotePlay.openFirewall = true;
-  dedicatedServer.openFirewall = true;
-  localNetworkGameTransfers.openFirewall = true;
-};
-programs.gamemode.enable = true;       
-
-environment.sessionVariables = {
-    STEAM_EXTRA_COMPAT_TOOLS_PATHS =
-      "\${HOME}/.steam/root/compatibilitytools.d";
-};
-
-
-
-
-
-#  === VIRT ===
-
-
- virtualisation = {
-    libvirtd = {
-      enable = true;
-      qemu = {
-        ovmf.enable = true;       # UEFI boot support (for Windows, etc.)
-        runAsRoot = true;         # Optional: can be omitted if not needed
-      };
-    };
-    spiceUSBRedirection.enable = true;  # SPICE USB redirection
-  };
-
-  programs.virt-manager.enable = true;   # GUI for managing VMs
-
-
-
-
-#  === FONTS ===
   fonts.packages = with pkgs; [
-    # jetbrains-mono
     noto-fonts
     noto-fonts-emoji
     cascadia-code
-    # twemoji-color-font
     font-awesome
     powerline-fonts
     powerline-symbols
-    # (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })	
-    ];
+  ];
 
+  # ===================================================================
+  # NIX CONFIGURATION
+  # ===================================================================
 
-services.upower.enable = lib.mkForce false;
-  
-users.defaultUserShell = pkgs.fish;      
-services.fwupd.enable = true;
-documentation.man.generateCaches = false; 
-hardware.enableAllFirmware = true;
-
-
-
-
-
-
-#  === WEBCAM MODULE ===
-
- boot.kernelModules = [ "uvcvideo" ];
-
-  users.groups.video = {};  
-
-
-
-nix = {
-  gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 30d";
+  nix = {
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 30d";
+    };
+    settings.experimental-features = [ "nix-command" "flakes" ];
   };
-  settings.experimental-features = [ "nix-command" "flakes" ];
-};
-
-
-services.system76-scheduler.settings.cfsProfiles.enable = true;
-
-
-system.stateVersion = "25.05";
-networking.hostName = "da-desktop";
 }

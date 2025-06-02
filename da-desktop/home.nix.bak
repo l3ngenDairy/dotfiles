@@ -1,20 +1,21 @@
-{ config, pkgs, lib, ... }: {
+{ config, pkgs, ... }: {
   imports = [
   ];
 
-  # Fix the conflicting homeDirectory definition
+        # services.ollama-container.enable = true;
+
   home.username = "david";
-  home.homeDirectory = lib.mkForce "/home/david";  # Force this value to resolve conflict
-  
+  home.homeDirectory = "/home/david";
   programs.fish.enable = true;
-  
+  home.shell.enableFishIntegration = true;
   programs.zellij.enable = true;      
   programs.zellij.enableFishIntegration = true;
   programs.zellij.settings = {
     default_shell = "${pkgs.fish}/bin/fish";
   };
 
-  programs.helix = {
+
+programs.helix = {
     enable = true;
     settings = {
       theme = "gruvbox";
@@ -68,5 +69,7 @@
 
   programs.git.enable = true;
 
-  home.stateVersion = "25.05";
+
+  home.stateVersion = "25.05"; # or your current NixOS version
 }
+
