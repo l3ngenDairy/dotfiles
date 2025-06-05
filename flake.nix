@@ -10,8 +10,8 @@
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
+     };
+    sops-nix.url = "github:Mic92/sops-nix";  
     # Hardware support
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
@@ -37,6 +37,7 @@
     pre-commit-hooks,
     flake-utils,
     nvf,
+    sops-nix,            
     ...
   }: let
     # Define system architecture
@@ -55,7 +56,11 @@
         })
         nur.overlay
       ];
-    };
+    }; 
+secretsFile = ./secrets/secrets.yaml;
+  ageKeyFile = "/home/david/.config/sops/age/keys.txt";
+
+
   in {
     nixosConfigurations = {
       # Desktop configuration
@@ -63,6 +68,7 @@
         inherit system;
         specialArgs = { inherit inputs; };
         modules = [
+          sops-nix.nixosModules.sops                                      
           ./da-desktop/configuration.nix
           ./user.nix
           nvf.nixosModules.default
@@ -72,6 +78,15 @@
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "backup";
             home-manager.users.david = import ./da-desktop/home.nix;
+
+             sops.secrets.userPassword = {
+        sopsFile = secretsFile;
+        key = "user-password";
+      };
+
+      sops.age.keyFile = ageKeyFile; 
+
+
           }
         ];
       };

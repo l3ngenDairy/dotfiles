@@ -63,7 +63,8 @@
     cargo
     rustfmt            
     alejandra       
-    lldb            
+    lldb  
+    age            
   ];
 
   programs.git.enable = true;

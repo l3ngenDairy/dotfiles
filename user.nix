@@ -1,6 +1,11 @@
-{ pkgs, ... }: {
-        #  programs.zsh.enable = true;
+{ pkgs, config, ... }:
+
+{  
+   # Location of your Age secret key
+  sops.age.keyFile = "/home/david/.config/sops/age/keys.txt";
+        
   programs.fish.enable = true;
+
   users = {
     defaultUserShell = pkgs.fish;
 
@@ -8,10 +13,26 @@
       isNormalUser = true;
       description = "david";
       extraGroups = [ "networkmanager" "wheel" "input" "libvirtd" "libvirt" "docker" "podman" "kvm" ];
-      packages = with pkgs; [fish];
+      packages = with pkgs; [ fish ];
+
+      # Use the decrypted sops secret for the password:
+      hashedPasswordFile = config.sops.secrets.userPassword.path;
     };
+
+    users.admin = {
+      isNormalUser = true;
+      extraGroups = [ "wheel" ];
+      # This one uses a static redacted password string:
+        };
   };
 
-  # Enable automatic login for the user.
-   services.getty.autologinUser = "david";
+  # Declare the sops secret here, matching the key in secrets.yaml:
+  sops.secrets.userPassword = {
+    sopsFile = ./secrets/secrets.yaml;
+    key = "user-password";
+  };
+
+  # Enable automatic login for david
+  services.getty.autologinUser = "david";
 }
+

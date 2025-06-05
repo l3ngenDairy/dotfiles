@@ -322,7 +322,7 @@
 # ===================================================================
 
 environment.systemPackages = with pkgs; [
-
+  protonvpn-gui
   # [CORE]
   file                 # Identify file types
   curl                 # Command-line tool for data transfer
@@ -332,7 +332,7 @@ environment.systemPackages = with pkgs; [
   bat                  # cat clone with syntax highlighting
   ripgrep              # Faster alternative to grep
   exiftool             # Read/write metadata in files
-
+  sops
   # [VIRT]
   libvirt              # Manage virtual machines
   qemu                 # Emulator and virtualizer

@@ -1,0 +1,7 @@
+   keys:
+  - &da-desktop age1wc92j84vfuj5pc5f7a3a489tn2g34cs3g4xugf5fpa4xpxemwdrsz58uzy
+creation_rules:
+  - path_regex: secrets.yaml$
+    key_groups:
+    - age:
+      - *da-desktop
