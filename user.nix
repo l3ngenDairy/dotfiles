@@ -22,8 +22,7 @@
     users.admin = {
       isNormalUser = true;
       extraGroups = [ "wheel" ];
-      # This one uses a static redacted password string:
-        };
+    };
   };
 
   # Declare the sops secret here, matching the key in secrets.yaml:
