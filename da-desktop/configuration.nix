@@ -340,6 +340,9 @@ environment.systemPackages = with pkgs; [
   spice-gtk            # GTK support for Spice clients
   virt-manager         # GUI for managing virtual machines
   looking-glass-client # Share VM screen via PCI passthrough
+  quickemu
+  quickgui
+
 
   # [GAMING]
   mangohud             # In-game performance overlay
@@ -349,6 +352,8 @@ environment.systemPackages = with pkgs; [
   prismlauncher        # Custom Minecraft launcher
   protonup             # Install Proton-GE versions
   umu-launcher         # Launcher for games/emulators
+  ryujinx              # Experimental Nintendo Switch Emulator written in C#
+
 
   # [AUDIO]
   alsa-utils           # ALSA sound utilities
@@ -400,7 +405,8 @@ environment.systemPackages = with pkgs; [
   handbrake            # Video transcoder/converter
   kepubify             # Convert eBooks for Kobo
   calibre              # eBook library manager
-  ciscoPacketTracer8   # Network simulation tool
+                
+  
   sniffnet             # Network packet monitor
   speedcrunch          # Scientific calculator
 
