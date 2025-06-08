@@ -323,6 +323,9 @@
 
 environment.systemPackages = with pkgs; [
   protonvpn-gui
+ powertop #program shows power utilised
+
+
   # [CORE]
   file                 # Identify file types
   curl                 # Command-line tool for data transfer
@@ -352,9 +355,7 @@ environment.systemPackages = with pkgs; [
   prismlauncher        # Custom Minecraft launcher
   protonup             # Install Proton-GE versions
   umu-launcher         # Launcher for games/emulators
-  ryujinx              # Experimental Nintendo Switch Emulator written in C#
-
-
+  ryubing
   # [AUDIO]
   alsa-utils           # ALSA sound utilities
   pavucontrol          # GUI for PulseAudio volume control
