@@ -146,6 +146,7 @@
   services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
+  services.displayManager.defaultSession = "plasmax11"; #lock to x11
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "david";
   
@@ -325,7 +326,7 @@ environment.systemPackages = with pkgs; [
   protonvpn-gui
  powertop #program shows power utilised
 uv
-
+brave
   # [CORE]
   file                 # Identify file types
   curl                 # Command-line tool for data transfer
