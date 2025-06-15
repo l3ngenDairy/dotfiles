@@ -1,13 +1,8 @@
 { config, pkgs, lib, ... }: {
   imports = [
   ];
-
-  # Fix the conflicting homeDirectory definition
-  home.username = "david";
-  home.homeDirectory = lib.mkForce "/home/david";  # Force this value to resolve conflict
-  
+ 
   programs.fish.enable = true;
-  
   programs.zellij.enable = true;      
   programs.zellij.enableFishIntegration = true;
   programs.zellij.settings = {
@@ -56,16 +51,7 @@
     };
   };
 
-  home.packages = with pkgs; [
-    rust-analyzer
-    nil
-    rustc
-    cargo
-    rustfmt            
-    alejandra       
-    lldb  
-    age            
-  ];
+  home.packages = with pkgs; [ rust-analyzer nil rustc cargo rustfmt alejandra lldb age ];
 
   programs.git.enable = true;
 
