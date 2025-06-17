@@ -421,7 +421,7 @@ brave
   sqlite               # Lightweight SQL database
   wl-clipboard         # Wayland clipboard utilities
   cliphist             # Clipboard history manager
-                #grayjay              # Modern open-source YouTube client
+  grayjay              # Modern open-source YouTube client
 
   # [BROWSERS]
   firefox              # Mozilla Firefox browser
