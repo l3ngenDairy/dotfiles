@@ -28,6 +28,10 @@
     };
   };
 
+
+
+
+        
   outputs = inputs @ {
     self,
     nixpkgs,
@@ -72,6 +76,10 @@ secretsFile = ./secrets/secrets.yaml;
           ./da-desktop/configuration.nix
           ./user.nix
           nvf.nixosModules.default
+
+                                        
+
+                                                
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;

@@ -289,7 +289,17 @@
     allowUnfree = true;
     permittedInsecurePackages = ["python-2.7.18.8" "electron-25.9.0" ];
   };
-
+  
+  programs.nix-ld = {
+    enable = true;                
+    libraries = with pkgs; [
+      zlib
+      openssl      
+      glib
+      stdenv.cc.cc
+    ];
+  };
+                 
   # ===================================================================
   # SYSTEM PACKAGES
   # ===================================================================
@@ -323,10 +333,11 @@
 # ===================================================================
 
 environment.systemPackages = with pkgs; [
+  nix-ld 
   protonvpn-gui
- powertop #program shows power utilised
-uv
-brave
+  powertop #program shows power utilised
+  uv
+  brave
   # [CORE]
   file                 # Identify file types
   curl                 # Command-line tool for data transfer
@@ -346,6 +357,11 @@ brave
   looking-glass-client # Share VM screen via PCI passthrough
   quickemu
   quickgui
+  distrobox              
+
+
+
+                
 
 
   # [GAMING]

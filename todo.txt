@@ -1,0 +1,2 @@
+todo
+install distrobox for ramdom binrarys 

@@ -7,6 +7,7 @@
   programs.zellij.enableFishIntegration = true;
   programs.zellij.settings = {
     default_shell = "${pkgs.fish}/bin/fish";
+    show_startup_tips = false; 
   };
 
   programs.helix = {
