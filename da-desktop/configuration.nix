@@ -146,7 +146,7 @@
   services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
-  services.displayManager.defaultSession = "plasmax11"; #lock to x11
+        #services.displayManager.defaultSession = "plasmax11"; #lock to x11
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "david";
   
@@ -420,7 +420,7 @@ environment.systemPackages = with pkgs; [
 
   # [MEDIA]
   transmission_4-gtk   # BitTorrent client (GTK)
-  handbrake            # Video transcoder/converter
+  handbrake            # Video transcoder/converter 
   kepubify             # Convert eBooks for Kobo
   calibre              # eBook library manager
                 
@@ -490,7 +490,7 @@ environment.systemPackages = with pkgs; [
   ropgadget            # Gadget finder for ROP exploits
   sqlmap               # SQL injection testing
   thc-hydra            # Password brute-forcer
-  social-engineer-toolkit # Phishing & SE attack toolset
+                #  social-engineer-toolkit # Phishing & SE attack toolset                    #broken dependency future 
   wireshark            # Network packet analyzer
   wordlists            # Common passwords for cracking
   hashcat              # Password hash cracker
