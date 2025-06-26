@@ -490,16 +490,9 @@ environment.systemPackages = with pkgs; [
   ropgadget            # Gadget finder for ROP exploits
   sqlmap               # SQL injection testing
   thc-hydra            # Password brute-forcer
-                #  social-engineer-toolkit # Phishing & SE attack toolset                    #broken dependency future 
   wireshark            # Network packet analyzer
   wordlists            # Common passwords for cracking
   hashcat              # Password hash cracker
-
-  # [SDR]
-  pkg-config           # Build helper for C/C++
-  rtl-sdr              # RTL-based SDR driver
-  rtl-sdr-librtlsdr    # Library for rtl-sdr
-  sdrpp                # SDR# inspired SDR software
 
   # [XORG]
   arandr               # Simple GUI for screen layout
